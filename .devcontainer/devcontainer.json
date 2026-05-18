@@ -1,0 +1,19 @@
+{
+  "name": "Backend_app-dev",
+
+  "dockerComposeFile": "../docker-compose.yml",
+
+  "service": "gateway",
+
+  "workspaceFolder": "/workspace",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma"
+      ]
+    }
+  }
+}

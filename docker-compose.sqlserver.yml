@@ -1,0 +1,42 @@
+services:
+
+  gateway:
+    build: ./Gateway
+
+    container_name: nest_gateway
+
+    volumes:
+      - .:/workspace
+
+    working_dir: /workspace/Gateway
+
+    ports:
+      - "3000:3000"
+
+    command: npm run start:dev
+
+    depends_on:
+      - sqlserver
+
+    environment:
+      DATABASE_URL: "sqlserver://sa:YourStrong@Passw0rd@sqlserver:1433;database=nestdb;trustServerCertificate=true"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+    container_name: sqlserver_db
+
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong@Passw0rd"
+
+    ports:
+      - "1433:1433"
+
+  ml-service:
+    build: ./ml-service
+
+    container_name: ml_service
+
+    ports:
+      - "5000:5000"

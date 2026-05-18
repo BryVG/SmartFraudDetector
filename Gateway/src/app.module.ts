@@ -10,7 +10,7 @@ import { FraudAnalysisModule } from './fraud-analysis/fraud-analysis.module';
 
 
 @Module({
-  imports: [SuppliersModule, BuyersModule, PurchaseOrdersModule, PurchaseItemsModule, FraudAnalysisModule],
+  imports: [SuppliersModule, BuyersModule, PurchaseOrdersModule, PurchaseItemsModule, FraudAnalysisModule, ProductsModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -13,7 +13,7 @@ import { AppModule }
 from './../src/app.module'
 import { response } from 'express'
 
-describe('Buyers (e2e)', () => {
+describe('Suppliers (e2e)', () => {
 
   let app: INestApplication
 
@@ -35,52 +35,52 @@ describe('Buyers (e2e)', () => {
     await app.close()
   })
 
-  it('/buyers (GET)', () => {
+  it('/suppliers (GET)', () => {
 
     return request(app.getHttpServer())
-      .get('/buyers')
+      .get('/suppliers')
       .expect(200)
 
   })
 
-  it('/buyers/:id (GET)', () => {
+  it('/suppliers/:id (GET)', () => {
 
     return request(app.getHttpServer())
-      .get('/buyers/1')
+      .get('/suppliers/1')
       .expect(200)
 
   })
-let buyerId: number
+let supplierId: number
 
-it('/buyers (POST)', async () => {
+it('/suppliers (POST)', async () => {
 
   const response = await request(app.getHttpServer())
-    .post('/buyers')
+    .post('/suppliers')
     .send({
-      name: 'VINI MEN'
+      name: 'ONG 1'
     })
 
-  buyerId = response.body.id
+  supplierId = response.body.id
   console.log(response.body)
   expect(response.status).toBe(201)
 
 })
 
-it('/buyers/:id (PUT)', () => {
+it('/suppliers/:id (PUT)', () => {
 
   return request(app.getHttpServer())
-    .put(`/buyers/${buyerId}`)
+    .put(`/suppliers/${supplierId}`)
     .send({
-      name: 'Bryan Updated'
+      name: 'ONG 1 TEST'
     })
     .expect(200)
 
 })
 
-  it('/buyers/:id (DELETE)', () => {
+  it('/suppliers/:id (DELETE)', () => {
 
     return request(app.getHttpServer())
-      .delete(`/buyers/${buyerId}`)
+      .delete(`/suppliers/${supplierId}`)
       .expect(200)
 
   })

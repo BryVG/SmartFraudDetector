@@ -5,11 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider  = "sqlserver"
   url       = env("DATABASE_URL")
 }
 
@@ -52,7 +53,8 @@ model PurchaseItem {
   unitPrice      Float
   totalPrice     Float
 
-  fraudAnalysis  FraudAnalysis?
+  fraudAnalysis  FraudAnalysis[]
+
 
   createdAt      DateTime @default(now())
   @@unique([purchaseOrderId, productId])
@@ -93,7 +95,7 @@ model Buyer {
 model FraudAnalysis {
   id               Int      @id @default(autoincrement())
 
-  purchaseItemId   Int      @unique
+  purchaseItemId   Int      
   purchaseItem     PurchaseItem @relation(fields: [purchaseItemId], references: [id])
 
   fraudScore       Float
