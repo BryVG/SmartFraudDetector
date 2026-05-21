@@ -16,7 +16,7 @@ describe('FraudAnalysis (e2e)', () => {
   let app: INestApplication
   let fraudId: number
 
-  beforeEach(async () => {
+  beforeAll(async () => {
 
     const moduleFixture: TestingModule =
       await Test.createTestingModule({
@@ -28,7 +28,7 @@ describe('FraudAnalysis (e2e)', () => {
     await app.init()
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close()
   })
 
@@ -53,7 +53,6 @@ describe('FraudAnalysis (e2e)', () => {
       })
 
     expect(createResponse.status).toBe(201)
-
     fraudId = createResponse.body.id
 
     // GET BY ID
