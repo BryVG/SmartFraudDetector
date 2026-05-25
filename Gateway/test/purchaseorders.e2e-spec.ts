@@ -12,11 +12,11 @@ import {
 import { AppModule } from './../src/app.module'
 import { PurchaseOrder } from 'src/purchase-orders/entities/purchase-order.entity'
 
-describe('PurchaseItems (e2e)', () => {
+describe('PurchaseOrders (e2e)', () => {
 
     let app: INestApplication
-    let purchaseItemId: number 
-    const unique = `${Date.now()}-${Math.floor(Math.random() * 1000)}` 
+    let purchaseOrderId: number  
+    const unique = Date.now()
 
     beforeAll(async () => {
 
@@ -34,14 +34,14 @@ describe('PurchaseItems (e2e)', () => {
         await app.close()
     })
 
-    it('/purchaseitems (GET)', () => {
+    it('/purchaseorders (GET)', () => {
 
         return request(app.getHttpServer())
-            .get('/purchaseitems')
+            .get('/purchaseorders')
             .expect(200)
     })
 
-    it('/purchaseitems flow', async () => {
+    it('/purchaseorders flow', async () => {
 
             // CREATE BUYER
             const buyer = await request(app.getHttpServer())
@@ -65,19 +65,6 @@ describe('PurchaseItems (e2e)', () => {
             expect(supplier.status).toBe(201)
             const supplierResponse = supplier.body.id
 
-            // CREATE PRODUCT
-            const product = await request(app.getHttpServer())
-            .post('/products')
-            .send({
-                      name: `Product-${unique}`,
-                      StandardUnit: 'UN',
-                      StandardMeasure: 'UN',
-            })
-            console.log(product.body)
-            console.log(product.text)
-            expect(product.status).toBe(201)
-            const productResponse = product.body.id
-
             // CREATE PURCHASE ORDER
             const order = await request(app.getHttpServer())
             .post('/purchaseorders')
@@ -85,50 +72,30 @@ describe('PurchaseItems (e2e)', () => {
                 orderNumber: `ORDER-${unique}`,
                 supplierId: supplierResponse,
                 buyerId: buyerResponse,
-                totalAmount: 2500.0,
+                totalAmount: 2700.0,
             })
             console.log(order.body)
             console.log(order.text)
             expect(order.status).toBe(201)
-            const purchaseOrderId = order.body.id
-
-        // CREATE
-        const response = await request(app.getHttpServer())
-            .post('/purchaseitems')
-            .send({
-                purchaseOrderId: purchaseOrderId,
-                quantity: 50.0,
-                productId: productResponse,
-                unit: '11',
-                Measure: 'kg',
-                unitPrice: 50.0,
-                totalPrice: 2500.0
-            })
-        expect(response.status).toBe(201)
-        console.log(response.body)
-        console.log(response.text)
-        purchaseItemId = response.body.id
+            purchaseOrderId = order.body.id
 
         // GET BY ID
         await request(app.getHttpServer())
-            .get(`/purchaseitems/${purchaseItemId}`)
+            .get(`/purchaseorders/${purchaseOrderId}`)
             .expect(200)
 
         // UPDATE
     await request(app.getHttpServer())
-            .put(`/purchaseitems/${purchaseItemId}`)
+            .put(`/purchaseorders/${purchaseOrderId}`)
             .send({
-                quantity: 20.0,
-                unit: '11',
-                Measure: 'kg',
-                unitPrice: 50.0,
-                totalPrice: 2500.0
+                orderNumber: `ORDER-${unique}`,
+                totalAmount: 2800.0,
             })
         .expect(200)
 
     // DELETE
     await request(app.getHttpServer())
-            .delete(`/purchaseitems/${purchaseItemId}`)
+            .delete(`/purchaseorders/${purchaseOrderId}`)
         .expect(200)
     })
 })
