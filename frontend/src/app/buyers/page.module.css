@@ -1,0 +1,96 @@
+.card {
+  background: white;
+  width: 500px;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 40px auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 24px;
+}
+
+.header button {
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.chartContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.chartCircle {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+
+  background: conic-gradient(
+    #c3ebfa 0deg 216deg,
+    #fae27c 216deg 360deg
+  );
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centerCircle {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 40px;
+}
+
+.bottom {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.blue {
+  background: #c3ebfa;
+}
+
+.yellow {
+  background: #fae27c;
+}
+
+.info h2 {
+  font-size: 28px;
+}
+
+.info p {
+  color: gray;
+}
