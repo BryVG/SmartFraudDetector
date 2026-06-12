@@ -1,0 +1,69 @@
+.announcements {
+  background-color: white;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.header span {
+  font-size: 12px;
+  color: gray;
+}
+
+.announcement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.announcement {
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.sky {
+  background-color: #dff4ff;
+}
+
+.purple {
+  background-color: #f0e4ff;
+}
+
+.yellow {
+  background-color: #fff6d6;
+}
+
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.announcement-header h2 {
+  font-weight: 500;
+}
+
+.date {
+  background-color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: gray;
+  font-size: 12px;
+}
+
+.announcement p {
+  margin-top: 4px;
+  color: gray;
+  font-size: 14px;
+}
