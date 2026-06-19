@@ -1,6 +1,6 @@
 "use client";
 
-import "./FormModal.css";
+import "./FormModal.module.css";
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -8,31 +8,26 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import styles from './FormModal.module.css';
+import { Product } from "../../types/product";
 
 import { productService } from "../services/product.service";
-import { supplierService } from "../services/supplier.service";
-import { buyerService } from "../services/buyer.service";
-import { purchaseOrderService } from "../services/purchaseOrder.service";
-import { purchaseItemService } from "../services/purchaseitem.service";
-import { fraudAnalysisService } from "../services/fraudanalysis.service";
+//import { supplierService } from "../services/supplier.service";
+//import { buyerService } from "../services/buyer.service";
+//import { purchaseOrderService } from "../services/purchaseOrder.service";
+//import { purchaseItemService } from "../services/purchaseitem.service";
+//import { fraudAnalysisService } from "../services/fraudanalysis.service";
 
 import { FormContainerProps } from "./FormContainer";
 
 const ProductForm = dynamic(() => import("./forms/ProductForm"));
-const SupplierForm = dynamic(() => import("./forms/SupplierForm"));
-const BuyerForm = dynamic(() => import("./forms/BuyerForm"));
-const PurchaseOrderForm = dynamic(() => import("./forms/PurchaseOrderForm"));
-const PurchaseItemForm = dynamic(() => import("./forms/PurchaseItemForm"));
-const FraudAnalysisForm = dynamic(() => import("./forms/FraudAnalysisForm"));
+
 
 type RelatedData = {
-  buyers?: Buyer[];
-  suppliers?: Supplier[];
   products?: Product[];
-  purchaseOrders?: PurchaseOrder[];
 };
 
-type TableName = FormContainerProps["table"];
+//type TableName = FormContainerProps["table"];
+type TableName = "product";
 
 type FormComponentProps = {
   type: "create" | "update";
@@ -45,21 +40,21 @@ type FormComponentProps = {
 type FormComponent = React.ComponentType<FormComponentProps>;
 
 const forms: Record<TableName, FormComponent> = {
-  product: ProductForm as FormComponent,
-  supplier: SupplierForm as FormComponent,
-  buyer: BuyerForm as FormComponent,
-  purchaseorder: PurchaseOrderForm as FormComponent,
-  purchaseitem: PurchaseItemForm as FormComponent,
-  fraudanalysis: FraudAnalysisForm as FormComponent,
+  product: ProductForm as FormComponent//,
+  //supplier: SupplierForm as FormComponent,
+  //buyer: BuyerForm as FormComponent,
+  //purchaseorder: PurchaseOrderForm as FormComponent,
+  //purchaseitem: PurchaseItemForm as FormComponent,
+  //fraudanalysis: FraudAnalysisForm as FormComponent,
 };
 
 const serviceMap = {
-  product: productService,
-  supplier: supplierService,
-  buyer: buyerService,
-  purchaseorder: purchaseOrderService,
-  purchaseitem: purchaseItemService,
-  fraudanalysis: fraudAnalysisService,
+  product: productService//,
+//  supplier: supplierService,
+//  buyer: buyerService,
+//  purchaseorder: purchaseOrderService,
+//  purchaseitem: purchaseItemService,
+//  fraudanalysis: fraudAnalysisService,
 };
 
 export default function FormModal({
