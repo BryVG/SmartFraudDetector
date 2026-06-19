@@ -9,17 +9,17 @@ export const createCrudService = (endpoint: string) => ({
   getById: async (id: number |string) => {
     const { data } = await api.get(`/${endpoint}/${id}`);
     return data;
-  }
-});
-  create: async (endpoint: string,payload: any) => {
+  },
+  create: async (payload: any) => {
     const { data } = await api.post(`/${endpoint}`, payload);
     return data;
-  }
-  update: async (id: number |string, payload: any, endpoint: string) => {
+  },
+  update: async (id: number |string, payload: any) => {
     const { data } = await api.put(`/${endpoint}/${id}`, payload);
     return data;
-  }
-  remove: async (id: string, endpoint: string) => {
+  },
+  remove: async (id: number | string) => {
     const { data } = await api.delete(`/${endpoint}/${id}`);
     return data;
   }
+});

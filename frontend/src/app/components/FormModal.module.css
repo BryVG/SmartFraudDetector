@@ -1,0 +1,87 @@
+.modal-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-create {
+  background: #fde68a;
+}
+
+.button-update {
+  background: #93c5fd;
+}
+
+.button-delete {
+  background: #d8b4fe;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.modal-content {
+  position: relative;
+
+  width: 700px;
+  max-width: 90%;
+
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 24px;
+}
+
+.close-button {
+  position: absolute;
+
+  top: 12px;
+  right: 12px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.delete-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.delete-message {
+  text-align: center;
+  font-weight: 500;
+}
+
+.delete-confirm-button {
+  align-self: center;
+
+  padding: 10px 20px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #dc2626;
+  color: white;
+
+  cursor: pointer;
+}
