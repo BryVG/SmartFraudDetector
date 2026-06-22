@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import "./ProductForm.css";
 
 type ProductFormProps = {
   type: "create" | "update";

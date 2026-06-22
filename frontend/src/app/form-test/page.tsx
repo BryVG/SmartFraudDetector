@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import FormModal from "../components/FormModal";
+import FormModal from "../components/FormModal/FormModal";
 import { productService } from "../services/product.service";
 
 export default function LaboratorioPage() {

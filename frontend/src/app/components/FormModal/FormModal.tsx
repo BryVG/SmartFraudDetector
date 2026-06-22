@@ -8,9 +8,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import styles from './FormModal.module.css';
-import { Product } from "../../types/product";
+import { Product } from "../../../types/product";
 
-import { productService } from "../services/product.service";
+import { productService } from "../../services/product.service";
 //import { supplierService } from "../services/supplier.service";
 //import { buyerService } from "../services/buyer.service";
 //import { purchaseOrderService } from "../services/purchaseOrder.service";
@@ -19,7 +19,7 @@ import { productService } from "../services/product.service";
 
 import { FormContainerProps } from "./FormContainer";
 
-const ProductForm = dynamic(() => import("./forms/ProductForm"));
+const ProductForm = dynamic(() => import("../forms/Product/ProductForm"));
 
 
 type RelatedData = {
