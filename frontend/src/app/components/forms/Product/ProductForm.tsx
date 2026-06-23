@@ -12,8 +12,8 @@ type ProductFormProps = {
 
 type ProductFormData = {
   name: string;
-  description: string;
-  price: number;
+  StandardUnit: string;
+  StandardMeasure: String;
 };
 
 export default function ProductForm({
@@ -28,15 +28,18 @@ export default function ProductForm({
   } = useForm<ProductFormData>({
     defaultValues: {
       name: data?.name || "",
-      description: data?.description || "",
-      price: data?.price || 0,
+      StandardUnit: data?.StandardUnit || "",
+      StandardMeasure: data?.StandardMeasure || "",
     },
   });
 
   return (
     <form
       className="product-form"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => {
+    console.log(data);
+    return onSubmit(data);
+  })}
     >
       <h2>
         {type === "create"
@@ -62,7 +65,7 @@ export default function ProductForm({
         <label>Descrição</label>
 
         <input
-          {...register("description")}
+          {...register("StandardUnit")}
         />
       </div>
 
@@ -70,16 +73,16 @@ export default function ProductForm({
         <label>Preço</label>
 
         <input
-          type="number"
-          step="0.01"
-          {...register("price", {
+          type="text"
+          //step="0.01"
+          {...register("StandardMeasure", {
             required: "Preço obrigatório",
-            valueAsNumber: true,
+            //valueAsNumber: true,
           })}
         />
 
-        {errors.price && (
-          <span>{errors.price.message}</span>
+        {errors.StandardMeasure && (
+          <span>{errors.StandardMeasure.message}</span>
         )}
       </div>
 

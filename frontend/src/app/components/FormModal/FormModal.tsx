@@ -17,7 +17,7 @@ import { productService } from "../../services/product.service";
 //import { purchaseItemService } from "../services/purchaseitem.service";
 //import { fraudAnalysisService } from "../services/fraudanalysis.service";
 
-import { FormContainerProps } from "./FormContainer";
+import { FormContainerProps } from "../FormContainer/FormContainer";
 
 const ProductForm = dynamic(() => import("../forms/Product/ProductForm"));
 
