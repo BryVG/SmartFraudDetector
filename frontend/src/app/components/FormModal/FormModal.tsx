@@ -17,14 +17,17 @@ import { purchaseOrderService } from "../../services/purchaseOrder.service";
 //import { purchaseItemService } from "../services/purchaseitem.service";
 //import { fraudAnalysisService } from "../services/fraudanalysis.service";
 
-import { FormContainerProps } from "../FormContainer/FormContainer";
-
 const ProductForm = dynamic(() => import("../forms/Product/ProductForm"));
 const PurchaseOrderForm = dynamic(() => import("../forms/PurchaseOrder/PurchaseOrderForm"))
 
-
+export type FormContainerProps = {
+    table: "product" | "purchaseorder"; //"buyer" | "supplier" | "purchaseitem" | "fraudanalysis";
+    type: "create" | "update" | "delete";
+    data?: any;
+    id?: number | string;
+}
 type RelatedData = {
-  products?: Product[];
+  [key: string]: any[];
 };
 
 type TableName = FormContainerProps["table"];
@@ -69,8 +72,9 @@ export default function FormModal({
 
   const router = useRouter();
 
-  const [relatedData, setRelatedData] = useState({});
-useEffect(() => {
+  const [relatedData, setRelatedData] = useState<RelatedData>({});
+
+  useEffect(() => {
   const loadRelatedData = async () => {
     switch (table) {
       case "purchaseorder":

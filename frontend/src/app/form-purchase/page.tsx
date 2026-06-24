@@ -3,9 +3,59 @@
 import { useEffect, useState } from "react";
 import FormModal from "../components/FormModal/FormModal";
 import { purchaseOrderService } from "../services/purchaseOrder.service";
-import { FormContainer } from "../components/FormContainer/FormContainer";
+import { styles } from "./page.module.css"
 
-export default function LaboratorioPage() {
+export default const LaboratorioPage = async ({searchParams,}: {searchParams: { [key: string]: string | undefined}
+}) => {
+
+  const columns = [
+  {
+    header: "Order",
+    accessor: "order",
+  },
+  {
+    header: "Capacity",
+    accessor: "capacity",
+    
+  },
+  {
+    header: "Grade",
+    accessor: "grade",
+    
+  },
+  {
+    header: "Supervisor",
+    accessor: "supervisor",
+    
+  }
+];
+
+const renderRow = (item: purchaseOrder) => (
+  <tr
+    key={item.id}
+    className={styles.tableRow}
+  >
+    <td className={styles.nameCell}>{item.name}</td>
+    <td className={styles.hiddenMobile}>{item.capacity}</td>
+    <td className={styles.hiddenMobile}>{item.name[0]}</td>
+    <td className={styles.hiddenMobile}>
+      {item.supervisor.name + " " + item.supervisor.surname}
+    </td>
+    <td>
+      <div className={styles.actions}>
+        
+          <>
+            <FormContainer table="class" type="update" data={item} />
+            <FormContainer table="class" type="delete" id={item.id} />
+          </>
+        
+      </div>
+    </td>
+  </tr>
+);
+  
+  
+  
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
 
   const loadPurchaseOrders = async () => {
