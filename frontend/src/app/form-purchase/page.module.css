@@ -1,0 +1,36 @@
+
+
+.tableRow{
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.875rem;
+}
+.tableRow:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.tableRow:hover {
+  background-color: #f3e8ff;
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hiddenMobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hiddenMobile {
+    display: table-cell;
+  }
+}
