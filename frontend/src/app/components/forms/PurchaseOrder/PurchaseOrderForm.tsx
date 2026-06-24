@@ -12,9 +12,9 @@ type PurchaseOrderprops = {
 
 type PurchaseOrderFormData = {
   orderNumber: string;
-  totalAmount: string;
-  buyerId: string;
-  supplierId: string
+  totalAmount: number;
+  buyerId: number;
+  supplierId: number
 };
 
 export default function PurchaseOrderForm({
@@ -30,9 +30,9 @@ export default function PurchaseOrderForm({
   } = useForm<PurchaseOrderFormData>({
     defaultValues: {
       orderNumber: data?.orderNumber || "",
-      totalAmount: data?.totalAmount || "",
-      buyerId: data?.buyerId || "",
-      supplierId: data?.supplierId || "",
+      totalAmount: data?.totalAmount ?? 0,
+      buyerId: data?.buyerId ?? 0,
+      supplierId: data?.supplierId ?? 0,
     },
   });
 
@@ -55,7 +55,7 @@ export default function PurchaseOrderForm({
       <div className="field">
         <label>Número do Pedido</label>
 
-        <input
+        <input 
           {...register("orderNumber", {
             required: "Número obrigatório",
           })}
@@ -69,9 +69,10 @@ export default function PurchaseOrderForm({
       <div className="field">
         <label>Valor Total</label>
 
-        <input
+        <input type="number"
           {...register("totalAmount", {
             required: "Valor obrigatório",
+             valueAsNumber: true
           })}
         />
 
@@ -86,6 +87,7 @@ export default function PurchaseOrderForm({
         <select
           {...register("buyerId", {
             required: "Comprador obrigatório",
+             valueAsNumber: true
           })}
         >
           <option value="">
@@ -113,6 +115,7 @@ export default function PurchaseOrderForm({
         <select
           {...register("supplierId", {
             required: "Fornecedor obrigatório",
+            valueAsNumber: true
           })}
         >
           <option value="">
