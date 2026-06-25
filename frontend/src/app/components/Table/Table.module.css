@@ -1,0 +1,9 @@
+
+.table{
+    width: full;
+}
+.table-cell {
+    text-align: left;
+    color: gray;
+    font-size: small;
+}
