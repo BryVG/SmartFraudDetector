@@ -1,40 +1,75 @@
-"use client"
+"use client";
 
-// Buyer Form Component
-import { Dispatch, SetStateAction, useState } from "react"
-import { useRouter } from "next/navigation"
-//import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-//import * as z from "zod"
-import { InputFiled } from "../InputFiled";
-import {
-    createBuyerSchema,
-    CreateBuyerSchemaType
+import { useForm } from "react-hook-form";
+
+type Buyerprops = {
+  type: "create" | "update";
+  data?: any;
+  relatedData?: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onSubmit: (formData: any) => Promise<void>;
 };
-import {
-    createBuyer,
-    updateBuyer
-}
-import { toast } from "react-hot-toast"
-import { useFormState } from "react-dom"
 
-type BuyerFormProps = {
-    type: "create" | "update";
-    data?: any;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    relatedData?: any;
-}
+type BuyerFormData = {
+  name: string;
+};
 
-const ClassForm = ({
+export default function BuyerForm({
   type,
   data,
-  setOpen,
-  relatedData,
-}: BuyerFormProps) => {
+  onSubmit,
+  relatedData
+}: Buyerprops) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ClassSchema>({
-    resolver: zodResolver(classSchema),
+  } = useForm<BuyerFormData>({
+    defaultValues: {
+      name: data?.name || ""
+    },
   });
+
+ return (
+    <form
+      className="buyer-form"
+      onSubmit={handleSubmit((formData) => {
+        console.log("DADOS DO FORM:");
+        console.log(formData);
+
+        return onSubmit(formData);
+      })}
+    >
+      <h2>
+        {type === "create"
+          ? "Cadastrar Comprador"
+          : "Editar Comprador"}
+      </h2>
+
+      <div className="field">
+        <label>Nome do Comprador</label>
+
+        <input 
+          {...register("name", {
+            required: "Número obrigatório",
+          })}
+        />
+
+        {errors.name && (
+          <span>{errors.name.message}</span>
+        )}
+      </div>
+
+      <button type="submit">
+        {type === "create"
+          ? "Cadastrar"
+          : "Atualizar"}
+      </button>
+    </form>
+  );
+}
+
+
+
+
+

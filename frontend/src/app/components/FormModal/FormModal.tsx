@@ -19,9 +19,11 @@ import { purchaseOrderService } from "../../services/purchaseOrder.service";
 
 const ProductForm = dynamic(() => import("../forms/Product/ProductForm"));
 const PurchaseOrderForm = dynamic(() => import("../forms/PurchaseOrder/PurchaseOrderForm"))
+const BuyerForm = dynamic(() => import("../forms/Buyer/BuyerForm"))
+const SupplierForm = dynamic(() => import("../forms/Supplier/SupplierForm"))
 
 export type FormContainerProps = {
-    table: "product" | "purchaseorder"; //"buyer" | "supplier" | "purchaseitem" | "fraudanalysis";
+    table: "product" | "purchaseorder" | "buyer" | "supplier"; //| "purchaseitem" | "fraudanalysis";
     type: "create" | "update" | "delete";
     data?: any;
     id?: number | string;
@@ -44,8 +46,8 @@ type FormComponent = React.ComponentType<FormComponentProps>;
 
 const forms: Record<TableName, FormComponent> = {
   product: ProductForm as FormComponent,
-  //supplier: SupplierForm as FormComponent,
-  //buyer: BuyerForm as FormComponent,
+  supplier: SupplierForm as FormComponent,
+  buyer: BuyerForm as FormComponent,
   purchaseorder: PurchaseOrderForm as FormComponent
   //purchaseitem: PurchaseItemForm as FormComponent,
   //fraudanalysis: FraudAnalysisForm as FormComponent,
@@ -53,8 +55,8 @@ const forms: Record<TableName, FormComponent> = {
 
 const serviceMap = {
   product: productService,
-//  supplier: supplierService,
-//  buyer: buyerService,
+  supplier: supplierService,
+  buyer: buyerService,
   purchaseorder: purchaseOrderService,
 //  purchaseitem: purchaseItemService,
 //  fraudanalysis: fraudAnalysisService,
