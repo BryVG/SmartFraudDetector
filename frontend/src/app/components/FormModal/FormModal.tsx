@@ -14,16 +14,17 @@ import { productService } from "../../services/product.service";
 import { supplierService } from "../../services/supplier.service";
 import { buyerService } from "../../services/buyer.service";
 import { purchaseOrderService } from "../../services/purchaseOrder.service";
-//import { purchaseItemService } from "../services/purchaseitem.service";
-//import { fraudAnalysisService } from "../services/fraudanalysis.service";
+import { purchaseItemService } from "../../services/purchaseitem.service";
+//import { fraudAnalysisService } from "../../services/fraudanalysis.service";
 
 const ProductForm = dynamic(() => import("../forms/Product/ProductForm"));
 const PurchaseOrderForm = dynamic(() => import("../forms/PurchaseOrder/PurchaseOrderForm"))
 const BuyerForm = dynamic(() => import("../forms/Buyer/BuyerForm"))
 const SupplierForm = dynamic(() => import("../forms/Supplier/SupplierForm"))
+const PurchaseItemForm = dynamic(() => import("../forms/PurchaseItem/PurchaseItemForm"))
 
 export type FormContainerProps = {
-    table: "product" | "purchaseorder" | "buyer" | "supplier"; //| "purchaseitem" | "fraudanalysis";
+    table: "product" | "purchaseorder" | "buyer" | "supplier" | "purchaseitem"; //| "fraudanalysis";
     type: "create" | "update" | "delete";
     data?: any;
     id?: number | string;
@@ -48,8 +49,8 @@ const forms: Record<TableName, FormComponent> = {
   product: ProductForm as FormComponent,
   supplier: SupplierForm as FormComponent,
   buyer: BuyerForm as FormComponent,
-  purchaseorder: PurchaseOrderForm as FormComponent
-  //purchaseitem: PurchaseItemForm as FormComponent,
+  purchaseorder: PurchaseOrderForm as FormComponent,
+  purchaseitem: PurchaseItemForm as FormComponent
   //fraudanalysis: FraudAnalysisForm as FormComponent,
 };
 
@@ -58,8 +59,8 @@ const serviceMap = {
   supplier: supplierService,
   buyer: buyerService,
   purchaseorder: purchaseOrderService,
-//  purchaseitem: purchaseItemService,
-//  fraudanalysis: fraudAnalysisService,
+  purchaseitem: purchaseItemService,
+  //fraudanalysis: fraudAnalysisService
 };
 
 
