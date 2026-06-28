@@ -6,39 +6,26 @@ import FormModal from "../components/FormModal/FormModal";
 import Table from "../components/Table/Table";
 import styles from "./page.module.css";
 
-import { purchaseItemService } from "../services/purchaseItem.service";
+import { purchaseItemService } from "../services/purchaseitem.service";
 import { PurchaseItem } from "../../types/purchaseItem";
+import { purchaseItemConfig } from "../config/entities/purchaseItem.config";
 
 export default function PurchaseItemPage() {
   const [purchaseItems, setPurchaseItems] = useState<PurchaseItem[]>([]);
 
-  const columns = [
-    {
-      header: "Produto",
-      accessor: "product",
-    },
-    {
-      header: "Purchase Order",
-      accessor: "purchaseOrder",
-    },
-    {
-      header: "Quantidade",
-      accessor: "quantity",
-    },
-    {
-      header: "Valor Unitário",
-      accessor: "unitPrice",
-    },
-    {
-      header: "Valor Total",
-      accessor: "totalPrice",
-    },
-    {
-      header: "Actions",
-      accessor: "actions",
-    },
-  ];
+ const columns = [
+  ...purchaseItemConfig.fields
+    .filter(field => field.showInTable)
+    .map(field => ({
+      header: field.label,
+      accessor: field.name,
+    })),
 
+  {
+    header: "Actions",
+    accessor: "actions",
+  },
+];
   const loadPurchaseItems = async () => {
     try {
       const data = await purchaseItemService.getAll();
@@ -55,49 +42,37 @@ export default function PurchaseItemPage() {
     loadPurchaseItems();
   }, []);
 
-  const renderRow = (item: PurchaseItem) => (
-    <tr
-      key={item.id}
-      className={styles.tableRow}
-    >
-      <td className={styles.nameCell}>
-        {item.product?.name ?? "-"}
+const renderRow = (item: PurchaseItem) => (
+<tr key={item.id}
+    className={styles.tableRow}>
+  {purchaseItemConfig.fields
+    .filter(field => field.showInTable)
+    .map(field => (
+      <td key={field.name}>
+        {field.format
+          ? field.format(item[field.name as keyof PurchaseItem])
+          : item[field.name as keyof PurchaseItem]}
       </td>
+    ))}
 
-      <td>
-        {item.purchaseOrder?.orderNumber ?? "-"}
-      </td>
+  <td>
+    <div className={styles.actions}>
+      <FormModal
+        table="purchaseitem"
+        type="update"
+        id={item.id}
+        data={item}
+      />
 
-      <td>
-        {item.quantity}
-      </td>
-
-      <td>
-        {item.unitPrice}
-      </td>
-
-      <td>
-        {item.totalPrice}
-      </td>
-
-      <td>
-        <div className={styles.actions}>
-          <FormModal
-            table="purchaseitem"
-            type="update"
-            id={item.id}
-            data={item}
-          />
-
-          <FormModal
-            table="purchaseitem"
-            type="delete"
-            id={item.id}
-          />
-        </div>
-      </td>
-    </tr>
-  );
+      <FormModal
+        table="purchaseitem"
+        type="delete"
+        id={item.id}
+      />
+    </div>
+  </td>
+</tr>
+);
 
   return (
     <div className={styles.container}>
