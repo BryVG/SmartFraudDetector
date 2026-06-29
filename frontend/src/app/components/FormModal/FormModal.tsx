@@ -8,50 +8,27 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import styles from './FormModal.module.css';
-import { Product } from "../../../types/product";
-
+import DynamicForm from "../DynamicForm/Dynamic.Form";
 import { productService } from "../../services/product.service";
 import { supplierService } from "../../services/supplier.service";
 import { buyerService } from "../../services/buyer.service";
 import { purchaseOrderService } from "../../services/purchaseOrder.service";
 import { purchaseItemService } from "../../services/purchaseitem.service";
 //import { fraudAnalysisService } from "../../services/fraudanalysis.service";
-
-const ProductForm = dynamic(() => import("../forms/Product/ProductForm"));
-const PurchaseOrderForm = dynamic(() => import("../forms/PurchaseOrder/PurchaseOrderForm"))
-const BuyerForm = dynamic(() => import("../forms/Buyer/BuyerForm"))
-const SupplierForm = dynamic(() => import("../forms/Supplier/SupplierForm"))
-const PurchaseItemForm = dynamic(() => import("../forms/PurchaseItem/PurchaseItemForm"))
+//import { productConfig } from "./product.config";
+//import { supplierConfig } from "./supplier.config";
+//import { buyerConfig } from "./buyer.config";
+//import { purchaseOrderConfig } from "../../../config/entities/purchaseOrder.config";
+import { entityConfigs } from "../../../config/entities";
 
 export type FormContainerProps = {
-    table: "product" | "purchaseorder" | "buyer" | "supplier" | "purchaseitem"; //| "fraudanalysis";
+    table: "purchaseitem";//"product" | "purchaseorder" | "buyer" | "supplier" | ; //| "fraudanalysis";
     type: "create" | "update" | "delete";
     data?: any;
     id?: number | string;
 }
 type RelatedData = {
   [key: string]: any[];
-};
-
-type TableName = FormContainerProps["table"];
-
-type FormComponentProps = {
-  type: "create" | "update";
-  data?: any;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  relatedData?: RelatedData;
-  onSubmit?: (formData: any) => Promise<void>;
-};
-
-type FormComponent = React.ComponentType<FormComponentProps>;
-
-const forms: Record<TableName, FormComponent> = {
-  product: ProductForm as FormComponent,
-  supplier: SupplierForm as FormComponent,
-  buyer: BuyerForm as FormComponent,
-  purchaseorder: PurchaseOrderForm as FormComponent,
-  purchaseitem: PurchaseItemForm as FormComponent
-  //fraudanalysis: FraudAnalysisForm as FormComponent,
 };
 
 const serviceMap = {
@@ -99,7 +76,7 @@ export default function FormModal({
   loadRelatedData();
 }, [table]);
 
-  const SelectedForm = forms[table];
+ const config = entityConfigs[table];
   const service = serviceMap[table];
 
   const handleAction = async (formData?: any) => {
@@ -180,13 +157,13 @@ export default function FormModal({
                 </button>
               </div>
             ) : (
-              <SelectedForm
-                type={type}
-                data={data}
-                relatedData={relatedData}
-                setOpen={setOpen}
-                onSubmit={handleAction}
-              />
+              <DynamicForm
+                 config={config}
+                 type={type}
+                 data={data}
+                 relatedData={relatedData}
+                 onSubmit={handleAction}
+/>
             )}
 
             <button

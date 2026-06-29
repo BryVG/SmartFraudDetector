@@ -1,3 +1,6 @@
+
+// foram removidos os productId e PurchaseOrderId, devido a semântica correta. deve ser usado apenas para criação/edição.
+
 export interface PurchaseItem {
   id: number;
   quantity: number;
@@ -7,14 +10,14 @@ export interface PurchaseItem {
   totalPrice: number;
   createdAt: string;
 
-  purchaseOrderId?: {
+  purchaseOrder?: {
     id: number;
     orderNumber: string;
     createdAt: string;
     totalAmount: number;
   };
 
-  productId?: {
+  product?: {
     id: number;
     name: string;
   };

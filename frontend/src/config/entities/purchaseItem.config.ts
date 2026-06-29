@@ -1,3 +1,7 @@
+
+
+import { EntityConfig } from "./types";
+
 export const purchaseItemConfig = {
   title: "Purchase Item",
 
@@ -89,4 +93,4 @@ export const purchaseItemConfig = {
       grid: 6,
     },
   ],
-};
+}satisfies EntityConfig;
