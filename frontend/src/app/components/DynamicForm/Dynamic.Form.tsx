@@ -1,13 +1,13 @@
 
-
+import { DynamicFormProps } from "@/types/dynamicform";
 
 export default function DynamicForm({
     config,
     type,
     data,
     relatedData,
-    onSubmit,
-}) {
+    onSubmit
+} : DynamicFormProps) {
 
     const {
         register,
