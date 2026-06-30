@@ -1,6 +1,8 @@
+// types/EntityConfig.ts
+
 import { FieldConfig } from "./FieldConfig";
 
 export interface EntityConfig {
-    title: string;
-    fields: FieldConfig[];
+  title: string;
+  fields: FieldConfig[];
 }

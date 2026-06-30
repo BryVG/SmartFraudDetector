@@ -7,10 +7,11 @@ import { BuyersModule } from './buyers/buyers.module';
 import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 import { PurchaseItemsModule } from './purchase-items/purchase-items.module';
 import { FraudAnalysisModule } from './fraud-analysis/fraud-analysis.module';
+import { MetadataModule } from './metadata/metadata.module';
 
 
 @Module({
-  imports: [SuppliersModule, BuyersModule, PurchaseOrdersModule, PurchaseItemsModule, FraudAnalysisModule, ProductsModule],
+  imports: [MetadataModule, SuppliersModule, BuyersModule, PurchaseOrdersModule, PurchaseItemsModule, FraudAnalysisModule, ProductsModule],
   controllers: [AppController],
   providers: [AppService],
 })

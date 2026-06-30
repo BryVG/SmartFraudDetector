@@ -1,4 +1,5 @@
-
+import { useForm } from "react-hook-form";
+import DynamicField from "./DynamicField";
 import { DynamicFormProps } from "@/types/dynamicform";
 
 export default function DynamicForm({
@@ -6,59 +7,44 @@ export default function DynamicForm({
     type,
     data,
     relatedData,
-    onSubmit
-} : DynamicFormProps) {
+    onSubmit,
+}: DynamicFormProps) {
 
     const {
         register,
         handleSubmit,
-        formState:{errors},
+        formState: { errors },
     } = useForm({
-        defaultValues:data
+        defaultValues: data,
     });
 
     return (
+        <form onSubmit={handleSubmit(onSubmit)}>
 
-<form
-onSubmit={handleSubmit(onSubmit)}
->
+            <h2>
+                {type === "create"
+                    ? `Cadastrar ${config.title}`
+                    : `Editar ${config.title}`}
+            </h2>
 
-<h2>
+            {config.fields
+                .filter(field => field.showInForm !== false)
+                .map(field => (
+                    <DynamicField
+                        key={field.name}
+                        field={field}
+                        register={register}
+                        errors={errors}
+                        relatedData={relatedData}
+                    />
+                ))}
 
-{type==="create"
-?`Cadastrar ${config.title}`
-:`Editar ${config.title}`}
+            <button type="submit">
+                {type === "create"
+                    ? "Cadastrar"
+                    : "Atualizar"}
+            </button>
 
-</h2>
-
-{
-config.fields.map(field=>(
-
-<DynamicField
-
-key={field.name}
-
-field={field}
-
-register={register}
-
-errors={errors}
-
-relatedData={relatedData}
-
-/>
-
-))
-}
-
-<button>
-
-Salvar
-
-</button>
-
-</form>
-
-)
-
+        </form>
+    );
 }
