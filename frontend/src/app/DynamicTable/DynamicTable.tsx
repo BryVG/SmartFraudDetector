@@ -1,7 +1,7 @@
-import styles from "./DynamicTable.module.css";
+//import styles from "./DynamicTable.module.css";
 import DynamicHeader from "./DynamicHeader";
 import DynamicRow from "./DynamicRow";
-import { EntityConfig } from "@/types/EntityConfig";
+import { EntityConfig } from "../../types/EntityConfig";
 
 type Props<T> = {
   config: EntityConfig;
@@ -15,7 +15,9 @@ export default function DynamicTable<T>({
   actions,
 }: Props<T>) {
   return (
-    <table className={styles.table}>
+    <table
+     //className={styles.table}
+     >
       <DynamicHeader config={config} />
 
       <tbody>

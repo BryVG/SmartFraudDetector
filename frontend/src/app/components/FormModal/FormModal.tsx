@@ -2,33 +2,28 @@
 
 import "./FormModal.module.css";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import styles from './FormModal.module.css';
+
+import styles from "./FormModal.module.css";
+
 import DynamicForm from "../DynamicForm/Dynamic.Form";
+
+import { entityConfigs } from "../../../config/entities";
+
 import { productService } from "../../services/product.service";
 import { supplierService } from "../../services/supplier.service";
 import { buyerService } from "../../services/buyer.service";
 import { purchaseOrderService } from "../../services/purchaseOrder.service";
 import { purchaseItemService } from "../../services/purchaseitem.service";
-//import { fraudAnalysisService } from "../../services/fraudanalysis.service";
-//import { productConfig } from "./product.config";
-//import { supplierConfig } from "./supplier.config";
-//import { buyerConfig } from "./buyer.config";
-//import { purchaseOrderConfig } from "../../../config/entities/purchaseOrder.config";
-import { entityConfigs } from "../../../config/entities";
 
 export type FormContainerProps = {
-    table: "purchaseitem";//"product" | "purchaseorder" | "buyer" | "supplier" | ; //| "fraudanalysis";
-    type: "create" | "update" | "delete";
-    data?: any;
-    id?: number | string;
-}
-type RelatedData = {
-  [key: string]: any[];
+  table: "purchaseitem"; // depois voltamos product | buyer | ...
+  type: "create" | "update" | "delete";
+  data?: any;
+  id?: number | string;
 };
 
 const serviceMap = {
@@ -37,68 +32,52 @@ const serviceMap = {
   buyer: buyerService,
   purchaseorder: purchaseOrderService,
   purchaseitem: purchaseItemService,
-  //fraudanalysis: fraudAnalysisService
 };
-
 
 export default function FormModal({
   table,
   type,
   data,
   id,
-}: FormContainerProps )
- {
+}: FormContainerProps) {
+
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
 
-  const [relatedData, setRelatedData] = useState<RelatedData>({});
+  const config = entityConfigs[table];
 
-  useEffect(() => {
-  const loadRelatedData = async () => {
-    switch (table) {
-      case "purchaseorder":
-        const [buyers, suppliers] =
-          await Promise.all([
-            buyerService.getAll(),
-            supplierService.getAll(),
-          ]);
-
-        setRelatedData({
-          buyers,
-          suppliers,
-        });
-
-        break;
-    }
-  };
-
-  loadRelatedData();
-}, [table]);
-
- const config = entityConfigs[table];
   const service = serviceMap[table];
 
-  const handleAction = async (formData?: any) => {
+  async function handleAction(formData?: any) {
+
     try {
-      if (type === "create") {
-        await service.create(formData);
-      }
 
-      if (type === "update") {
-        if (!id) throw new Error("Id is required");
+      switch (type) {
 
-        await service.update(id, formData);
-      }
+        case "create":
+          await service.create(formData);
+          break;
 
-      if (type === "delete") {
-        if (!id) throw new Error("Id is required");
+        case "update":
 
-        await service.remove(id);
+          if (!id)
+            throw new Error("Id is required");
+
+          await service.update(id, formData);
+          break;
+
+        case "delete":
+
+          if (!id)
+            throw new Error("Id is required");
+
+          await service.remove(id);
+          break;
       }
 
       toast.success(
-        `${table} ${
+        `${config.title} ${
           type === "create"
             ? "created"
             : type === "update"
@@ -110,19 +89,16 @@ export default function FormModal({
       setOpen(false);
 
       router.refresh();
+
     } catch (error) {
+
       console.error(error);
 
       toast.error("Something went wrong");
-    }
-  };
 
-  const buttonClass =
-    type === "create"
-      ? "button-create"
-      : type === "update"
-      ? "button-update"
-      : "button-delete";
+    }
+
+  }
 
   return (
     <>
@@ -139,14 +115,18 @@ export default function FormModal({
       </button>
 
       {open && (
+
         <div className={styles.modalOverlay}>
+
           <div className={styles.modalContent}>
 
             {type === "delete" ? (
+
               <div className={styles.deleteContainer}>
+
                 <span className={styles.deleteMessage}>
-                  Todos os dados serão perdidos. Tem certeza que deseja excluir
-                  este {table}?
+                  Todos os dados serão perdidos.
+                  Tem certeza que deseja excluir este {config.title}?
                 </span>
 
                 <button
@@ -155,15 +135,18 @@ export default function FormModal({
                 >
                   Excluir
                 </button>
+
               </div>
+
             ) : (
+
               <DynamicForm
-                 config={config}
-                 type={type}
-                 data={data}
-                 relatedData={relatedData}
-                 onSubmit={handleAction}
-/>
+                config={config}
+                type={type}
+                data={data}
+                onSubmit={handleAction}
+              />
+
             )}
 
             <button
@@ -174,7 +157,9 @@ export default function FormModal({
             </button>
 
           </div>
+
         </div>
+
       )}
     </>
   );

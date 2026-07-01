@@ -1,8 +1,11 @@
+import { FieldConfig } from "@/types/FieldConfig";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
+
 type DynamicFieldProps = {
-  field: any;
-  register: any;
-  errors: any;
-  relatedData: any;
+  field: FieldConfig;
+  register: UseFormRegister<any>;
+  errors: FieldErrors;
+  relatedData: Record<string, any[]>;
 };
 
 export default function DynamicField({
@@ -13,7 +16,8 @@ export default function DynamicField({
 }: DynamicFieldProps) {
   const validation = {
     required: field.required,
-    valueAsNumber: field.type === "number" || field.type === "select",
+    valueAsNumber:
+      field.type === "number" || field.type === "select",
   };
 
   const renderers = {
@@ -21,10 +25,14 @@ export default function DynamicField({
       <div className="field">
         <label>{field.label}</label>
 
-        <input {...register(field.name, validation)} />
+        <input
+          placeholder={field.placeholder}
+          className={field.inputClassName}
+          {...register(field.name, validation)}
+        />
 
         {errors[field.name] && (
-          <span>{errors[field.name]?.message}</span>
+          <span>{String(errors[field.name]?.message)}</span>
         )}
       </div>
     ),
@@ -36,11 +44,13 @@ export default function DynamicField({
         <input
           type="number"
           step={field.step}
+          placeholder={field.placeholder}
+          className={field.inputClassName}
           {...register(field.name, validation)}
         />
 
         {errors[field.name] && (
-          <span>{errors[field.name]?.message}</span>
+          <span>{String(errors[field.name]?.message)}</span>
         )}
       </div>
     ),
@@ -51,36 +61,12 @@ export default function DynamicField({
 
         <input
           type="date"
+          className={field.inputClassName}
           {...register(field.name, validation)}
         />
 
         {errors[field.name] && (
-          <span>{errors[field.name]?.message}</span>
-        )}
-      </div>
-    ),
-
-    select: () => (
-      <div className="field">
-        <label>{field.label}</label>
-
-        <select {...register(field.name, validation)}>
-          <option value="">
-            Selecione...
-          </option>
-
-          {relatedData?.[field.options]?.map((option: any) => (
-            <option
-              key={option[field.optionValue]}
-              value={option[field.optionValue]}
-            >
-              {option[field.optionLabel]}
-            </option>
-          ))}
-        </select>
-
-        {errors[field.name] && (
-          <span>{errors[field.name]?.message}</span>
+          <span>{String(errors[field.name]?.message)}</span>
         )}
       </div>
     ),
@@ -90,17 +76,53 @@ export default function DynamicField({
         <label>{field.label}</label>
 
         <textarea
+          placeholder={field.placeholder}
+          className={field.inputClassName}
           {...register(field.name, validation)}
         />
 
         {errors[field.name] && (
-          <span>{errors[field.name]?.message}</span>
+          <span>{String(errors[field.name]?.message)}</span>
         )}
       </div>
     ),
+
+select: () => {
+  const options =
+    relatedData?.[field.name] ?? [];
+
+  return (
+    <div className="field">
+      <label>{field.label}</label>
+
+      <select
+        className={field.inputClassName}
+        {...register(field.name, validation)}
+      >
+        <option value="">
+          Selecione...
+        </option>
+
+        {options.map((option: any) => (
+          <option
+            key={option[field.optionValue!]}
+            value={option[field.optionValue!]}
+          >
+            {option[field.optionLabel!]}
+          </option>
+        ))}
+      </select>
+
+      {errors[field.name] && (
+        <span>{String(errors[field.name]?.message)}</span>
+      )}
+    </div>
+  );
+},
   };
 
-  const render = renderers[field.type as keyof typeof renderers];
+  const render =
+    renderers[field.type as keyof typeof renderers];
 
   return render ? render() : null;
 }
