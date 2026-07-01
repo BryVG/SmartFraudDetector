@@ -1,6 +1,4 @@
-
-
-import { EntityConfig } from "./types";
+import { EntityConfig } from "../../types/EntityConfig";
 
 export const purchaseItemConfig = {
   title: "Purchase Item",
@@ -40,6 +38,7 @@ export const purchaseItemConfig = {
       required: "Valor Unitário obrigatório",
       step: "0.01",
       showInTable: true,
+      format: "currency",
       grid: 4,
     },
 
@@ -50,6 +49,7 @@ export const purchaseItemConfig = {
       required: "Valor Total obrigatório",
       step: "0.01",
       showInTable: true,
+      format: "currency",
       grid: 4,
     },
 
@@ -58,10 +58,15 @@ export const purchaseItemConfig = {
       label: "Produto",
       type: "select",
       required: "Produto obrigatório",
-      format: (value) => value?.name ?? "-",  
-      options: "products",
-      optionLabel: "name",
+
+      endpoint: "/products",
+
       optionValue: "id",
+      optionLabel: "name",
+
+      displayField: "name",
+
+      format: "relation",
 
       grid: 6,
     },
@@ -70,13 +75,16 @@ export const purchaseItemConfig = {
       name: "purchaseOrderId",
       label: "Purchase Order",
       type: "select",
-      format: (value: any) => value?.orderNumber ?? "-",  
-      
       required: "Pedido obrigatório",
 
-      options: "purchaseOrders",
-      optionLabel: "orderNumber",
+      endpoint: "/purchaseOrders",
+
       optionValue: "id",
+      optionLabel: "orderNumber",
+
+      displayField: "orderNumber",
+
+      format: "relation",
 
       grid: 6,
     },
@@ -85,12 +93,12 @@ export const purchaseItemConfig = {
       name: "createdAt",
       label: "Data",
       type: "date",
-      format: (value) => new Date(value).toLocaleDateString(),
       required: "Data obrigatória",
-
       showInTable: true,
+
+      format: "date",
 
       grid: 6,
     },
   ],
-}satisfies EntityConfig;
+} satisfies EntityConfig;

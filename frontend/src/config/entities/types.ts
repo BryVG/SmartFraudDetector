@@ -27,8 +27,3 @@ export interface FieldConfig {
   format?: (value: any) => React.ReactNode;
 }
 
-export interface EntityConfig {
-  title: string;
-
-  fields: FieldConfig[];
-}

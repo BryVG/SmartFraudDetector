@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import DynamicField from "./DynamicField";
-import { DynamicFormProps } from "@/types/dynamicform";
-import { api } from "@/app/services/api"; // ajuste o caminho conforme seu projeto
+import { DynamicFormProps } from "../../../types/dynamicform";
+import { api } from "../../services/api"; // ajuste o caminho conforme seu projeto
 
 export default function DynamicForm({
   config,
@@ -44,7 +44,7 @@ export default function DynamicForm({
 
           const response = await api.get(field.endpoint);
 
-          result[field.endpoint] = response.data;
+          result[field.name] = response.data;
 
         } catch (error) {
 

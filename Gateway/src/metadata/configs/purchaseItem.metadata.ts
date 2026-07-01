@@ -2,6 +2,7 @@ import { EntityConfig } from "../EntityConfig";
 
 export const purchaseItemMetadata = {
   title: "Purchase Item",
+  endpoint: "/purchaseitems",
 
   fields: [
     {

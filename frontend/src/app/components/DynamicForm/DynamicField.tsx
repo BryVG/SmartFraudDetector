@@ -89,7 +89,7 @@ export default function DynamicField({
 
 select: () => {
   const options =
-    relatedData?.[field.endpoint ?? ""] ?? [];
+    relatedData?.[field.name] ?? [];
 
   return (
     <div className="field">
