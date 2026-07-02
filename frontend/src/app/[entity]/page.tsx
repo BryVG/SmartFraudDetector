@@ -59,10 +59,11 @@ export default function EntityPage() {
         type="create"
       />
 
-      <DynamicTable
-        config={metadata}
-        data={data}
-      />
+<DynamicTable
+    entity={entity}
+    config={metadata}
+    data={data}
+/>
 
     </div>
 

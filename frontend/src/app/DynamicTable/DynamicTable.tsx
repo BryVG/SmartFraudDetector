@@ -1,32 +1,32 @@
 //import styles from "./DynamicTable.module.css";
+
 import DynamicHeader from "./DynamicHeader";
 import DynamicRow from "./DynamicRow";
+
 import { EntityConfig } from "../../types/EntityConfig";
 
 type Props<T> = {
+  entity: string;
   config: EntityConfig;
   data: T[];
-  actions?: (item: T) => React.ReactNode;
 };
 
 export default function DynamicTable<T>({
+  entity,
   config,
   data,
-  actions,
 }: Props<T>) {
   return (
-    <table
-     //className={styles.table}
-     >
+    <table>
       <DynamicHeader config={config} />
 
       <tbody>
         {data.map((item: any) => (
           <DynamicRow
             key={item.id}
+            entity={entity}
             item={item}
             config={config}
-            actions={actions}
           />
         ))}
       </tbody>

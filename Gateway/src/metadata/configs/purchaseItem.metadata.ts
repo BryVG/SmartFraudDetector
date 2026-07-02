@@ -77,6 +77,7 @@ export const purchaseItemMetadata = {
       name: "productId",
       label: "Produto",
       type: "select",
+      relation: "product",
       
 
       required: "Produto obrigatório",
@@ -95,7 +96,7 @@ export const purchaseItemMetadata = {
       name: "purchaseOrderId",
       label: "Purchase Order",
       type: "select",
-
+      relation: "purchaseOrder",
       required: "Pedido obrigatório",
 
       endpoint: "/purchaseOrders",

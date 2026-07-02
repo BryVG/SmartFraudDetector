@@ -1,6 +1,7 @@
 import {
   IsOptional,
-  IsNumber
+  IsNumber,
+  IsString
 } from 'class-validator'
 
 export class UpdatePurchaseItemDto {
@@ -24,4 +25,13 @@ export class UpdatePurchaseItemDto {
   @IsOptional()
   @IsNumber()
   totalPrice?: number
+
+    @IsString()
+    unit!: string;
+  
+    @IsString()
+    Measure!: string;
+
+  
+
 }

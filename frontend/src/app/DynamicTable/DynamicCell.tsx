@@ -2,7 +2,7 @@ import { FieldConfig } from "../../types/FieldConfig";
 
 type Props = {
   field: FieldConfig;
-  value: any;
+  item: any;
 };
 
 const formatters = {
@@ -23,20 +23,22 @@ const formatters = {
 
 export default function DynamicCell({
   field,
-  value,
+  item,
 }: Props) {
+
+  const value = field.relation
+    ? item[field.relation]
+    : item[field.name];
 
   const formatter =
     field.format &&
-    formatters[field.format as keyof typeof formatters];
+    formatters[field.format];
 
   return (
     <td className={field.tableClassName}>
-
       {formatter
         ? formatter(value, field)
         : String(value ?? "-")}
-
     </td>
   );
 }

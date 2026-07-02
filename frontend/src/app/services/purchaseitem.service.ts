@@ -2,4 +2,4 @@
 
 import { createCrudService } from "./crudService";
 
-export const purchaseItemService = createCrudService('purchase-items');
+export const purchaseItemService = createCrudService('purchaseitems');

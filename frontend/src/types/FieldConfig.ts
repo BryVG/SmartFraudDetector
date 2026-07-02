@@ -36,6 +36,7 @@ export interface FieldConfig {
 
   className?: string;
 
+ relation?: string;
 
   inputClassName?: string;
 
