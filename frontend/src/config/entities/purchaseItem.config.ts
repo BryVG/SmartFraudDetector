@@ -65,7 +65,7 @@ export const purchaseItemConfig = {
       optionLabel: "name",
 
       displayField: "name",
-
+      showInTable: true,  
       format: "relation",
 
       grid: 6,
@@ -83,7 +83,7 @@ export const purchaseItemConfig = {
       optionLabel: "orderNumber",
 
       displayField: "orderNumber",
-
+      showInTable: true,  
       format: "relation",
 
       grid: 6,

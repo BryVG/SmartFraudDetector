@@ -29,7 +29,11 @@ export default function DynamicCell({
   const value = field.relation
     ? item[field.relation]
     : item[field.name];
-
+console.log("------------");
+console.log("Campo:", field.name);
+console.log("Relation:", field.relation);
+console.log("Item:", item);
+console.log("Valor calculado:", value);
   const formatter =
     field.format &&
     formatters[field.format];

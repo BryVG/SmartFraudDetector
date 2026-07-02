@@ -14,8 +14,13 @@ export default function DynamicRow({
   config,
 }: Props) {
 
-  console.log("ITEM:", item);
-
+console.table(
+  config.fields.map(f => ({
+    name: f.name,
+    showInTable: f.showInTable,
+    relation: f.relation,
+  }))
+);
   return (
     <tr>
 

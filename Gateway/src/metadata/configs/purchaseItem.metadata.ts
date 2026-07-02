@@ -86,7 +86,7 @@ export const purchaseItemMetadata = {
 
       optionValue: "id",
       optionLabel: "name",
-
+      showInTable: true,  
       displayField: "name",
        format: "relation",
       grid: 6,
@@ -104,7 +104,7 @@ export const purchaseItemMetadata = {
       optionValue: "id",
       optionLabel: "orderNumber",
       format: "relation",
-
+      showInTable: true,  
       displayField: "orderNumber",
 
       grid: 6,

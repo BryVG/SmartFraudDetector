@@ -35,6 +35,8 @@ export default function EntityPage() {
 
         setMetadata(meta.data);
         setData(rows.data);
+        console.log("METADATA");
+console.log(meta.data);
 
       } catch (err) {
         console.error(err);

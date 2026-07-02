@@ -7,6 +7,13 @@ type Props = {
 export default function DynamicHeader({
   config,
 }: Props) {
+  console.log(config.fields);
+console.table(
+  config.fields.map(f => ({
+    name: f.name,
+    showInTable: f.showInTable,
+  }))
+);
   return (
     <thead>
       <tr>
