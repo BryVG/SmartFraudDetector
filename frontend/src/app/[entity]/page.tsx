@@ -1,74 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
-import { api } from "../services/api";
-
+import { useQuery } from "@tanstack/react-query";
+import { useEntity } from "../hooks/useEntity";
 import DynamicTable from "../DynamicTable/DynamicTable";
 import FormModal from "../components/FormModal/FormModal";
 
-export default function EntityPage() {
 
+export default function EntityPage() {
   const { entity } = useParams<{
     entity: string;
   }>();
 
-  const [metadata, setMetadata] = useState<any>(null);
-  const [data, setData] = useState<any[]>([]);
+  const {
+  metadata,
+  rows,
+  isLoading,
+  error,
+} = useEntity(entity, {
+    loadMetadata: true,
+    loadRows: true,
+});
 
-  useEffect(() => {
+if (isLoading) return <div>Carregando...</div>;
 
-    if (!entity) return;
+if (error) return <div>Erro...</div>;
 
-    async function load() {
+return (
+  <>
+    <FormModal table={entity} type="create" />
 
-      try {
-
-        const [meta, rows] = await Promise.all([
-
-          api.get(`/metadata/${entity}`),
-
-          api.get(`/${entity}`),
-
-        ]);
-
-        setMetadata(meta.data);
-        setData(rows.data);
-        console.log("METADATA");
-console.log(meta.data);
-
-      } catch (err) {
-        console.error(err);
-      }
-
-    }
-
-    load();
-
-  }, [entity]);
-
-  if (!metadata) {
-    return <div>Carregando...</div>;
-  }
-
-  return (
-
-    <div>
-
-      <FormModal
-        table={entity as any}
-        type="create"
-      />
-
-<DynamicTable
-    entity={entity}
-    config={metadata}
-    data={data}
-/>
-
-    </div>
-
+    <DynamicTable
+      entity={entity}
+      config={metadata}
+      data={rows ?? []}
+    />
+  </>
   );
-
 }
