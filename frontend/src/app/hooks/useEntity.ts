@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { createCrudService } from "../services/crudService";
+import { useMemo } from "react";
+import { metadataService } from "../services/metadata.service";
 
 type UseEntityOptions = {
   loadMetadata?: boolean;
@@ -9,25 +12,24 @@ type UseEntityOptions = {
 export function useEntity(entity: string,
   options: UseEntityOptions = {}) {
   
-    const metadataQuery = useQuery({
-    queryKey: ["metadata", entity],
-    queryFn: async () => {
-      const response = await api.get(`/metadata/${entity}`);
-      return response.data;
-    },
-    enabled: !!entity && options.loadMetadata !== false,
-  });
+    const service = useMemo(
+  () => createCrudService(entity),
+  [entity]
+);
 
-  const rowsQuery = useQuery({
-    queryKey: ["rows", entity],
-    queryFn: async () => {
-      const response = await api.get(`/${entity}`);
-      return response.data;
-    },
-    enabled: !!entity && options.loadRows !== false,
-  });
+const metadataQuery = useQuery({
+  queryKey: ["metadata", entity],
+  queryFn: () => metadataService.get(entity),
+  enabled: !!entity && options.loadMetadata !== false,
+});
 
-  return {
+const rowsQuery = useQuery({
+  queryKey: ["rows", entity],
+  queryFn: service.getAll,
+  enabled: !!entity && options.loadRows !== false,
+});
+
+ return {
     
     metadata: metadataQuery.data,
     rows: rowsQuery.data,

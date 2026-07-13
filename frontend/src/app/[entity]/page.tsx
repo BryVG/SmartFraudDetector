@@ -6,7 +6,6 @@ import { useEntity } from "../hooks/useEntity";
 import DynamicTable from "../DynamicTable/DynamicTable";
 import FormModal from "../components/FormModal/FormModal";
 
-
 export default function EntityPage() {
   const { entity } = useParams<{
     entity: string;
