@@ -8,27 +8,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import styles from "./FormModal.module.css";
 import DynamicForm from "../DynamicForm/Dynamic.Form";
-import { useEffect } from "react";
-import { api } from "../../services/api";
-import { productService } from "../../services/product.service";
-import { supplierService } from "../../services/supplier.service";
-import { buyerService } from "../../services/buyer.service";
-import { purchaseOrderService } from "../../services/purchaseOrder.service";
-import { purchaseItemService } from "../../services/purchaseitem.service";
+import { createCrudService } from "../../services/crudService";
 
 export type FormContainerProps = {
   table: string; // depois voltamos product | buyer | ...
   type: "create" | "update" | "delete";
   data?: any;
   id?: number | string;
-};
-
-const serviceMap = {
-  product: productService,
-  supplier: supplierService,
-  buyer: buyerService,
-  purchaseorder: purchaseOrderService,
-  purchaseitems: purchaseItemService,
+  metadata: any; // Adicionando a propriedade metadata
 };
 
 export default function FormModal({
@@ -36,45 +23,14 @@ export default function FormModal({
   type,
   data,
   id,
+  metadata,
 }: FormContainerProps) {
 
   const [open, setOpen] = useState(false);
   
-
   const router = useRouter();
 
-  const [config, setConfig] = useState<any>(null);
-
-  
-  const service = serviceMap[
-  table as keyof typeof serviceMap
-];
-  console.log("table:", table);
-console.log("service:", service);
-
-useEffect(() => {
-
-    if (!open) return;
-
-    async function loadMetadata() {
-
-        try {
-
-            const response = await api.get(`/metadata/${table}`);
-
-            setConfig(response.data);
-
-        } catch (err) {
-
-            console.error(err);
-
-        }
-
-    }
-
-    loadMetadata();
-
-}, [open, table]);
+  const service = createCrudService(table);
 
   async function handleAction(formData?: any) {
 
@@ -104,7 +60,7 @@ useEffect(() => {
       }
 
       toast.success(
-        `${config?.title ?? table} ${
+        `${metadata?.title ?? table} ${
           type === "create"
             ? "created"
             : type === "update"
@@ -153,7 +109,7 @@ useEffect(() => {
 
                 <span className={styles.deleteMessage}>
                   Todos os dados serão perdidos.
-                  Tem certeza que deseja excluir este {config?.title ?? table}?
+                  Tem certeza que deseja excluir este {metadata?.title ?? table}?
                 </span>
 
                 <button
@@ -165,14 +121,14 @@ useEffect(() => {
 
               </div>
 
-            ) : !config ? (
+            ) : !metadata ? (
 
     <p>Carregando...</p>
 
 ) : (
 
     <DynamicForm
-        config={config}
+        metadata={metadata}
         type={type}
         data={data}
         onSubmit={handleAction}

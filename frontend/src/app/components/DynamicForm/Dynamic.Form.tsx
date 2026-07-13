@@ -8,7 +8,7 @@ import { DynamicFormProps } from "../../../types/dynamicform";
 import { api } from "../../services/api"; // ajuste o caminho conforme seu projeto
 
 export default function DynamicForm({
-  config,
+  metadata,
   type,
   data,
   onSubmit,

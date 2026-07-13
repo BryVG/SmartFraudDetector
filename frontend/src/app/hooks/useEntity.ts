@@ -7,6 +7,7 @@ import { metadataService } from "../services/metadata.service";
 type UseEntityOptions = {
   loadMetadata?: boolean;
   loadRows?: boolean;
+  enabled?: boolean;
 };
 
 export function useEntity(entity: string,
@@ -20,13 +21,13 @@ export function useEntity(entity: string,
 const metadataQuery = useQuery({
   queryKey: ["metadata", entity],
   queryFn: () => metadataService.get(entity),
-  enabled: !!entity && options.loadMetadata !== false,
+  enabled: !!entity && !!entity && options.loadMetadata !== false,
 });
 
 const rowsQuery = useQuery({
   queryKey: ["rows", entity],
   queryFn: service.getAll,
-  enabled: !!entity && options.loadRows !== false,
+  enabled: !!entity && !!entity && options.loadRows !== false,
 });
 
  return {

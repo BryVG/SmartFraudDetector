@@ -7,18 +7,18 @@ import { EntityConfig } from "../../types/EntityConfig";
 
 type Props<T> = {
   entity: string;
-  config: EntityConfig;
+  metadata: EntityConfig;
   data: T[];
 };
 
 export default function DynamicTable<T>({
   entity,
-  config,
+  metadata,
   data,
 }: Props<T>) {
   return (
     <table>
-      <DynamicHeader config={config} />
+      <DynamicHeader metadata={metadata} />
 
       <tbody>
         {data.map((item: any) => (
@@ -26,7 +26,7 @@ export default function DynamicTable<T>({
             key={item.id}
             entity={entity}
             item={item}
-            config={config}
+            metadata={metadata}
           />
         ))}
       </tbody>
