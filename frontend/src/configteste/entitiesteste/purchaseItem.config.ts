@@ -1,4 +1,4 @@
-import { EntityConfig } from "../../types/EntityConfig";
+import { EntityConfig } from "../../types/EntityConfigtesteee";
 
 export const purchaseItemConfig = {
   title: "Purchase Item",

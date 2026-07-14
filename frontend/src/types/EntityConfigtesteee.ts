@@ -1,4 +1,4 @@
-import { FieldConfig } from "./FieldConfig";
+import { FieldConfig } from "./FieldConfigtesteee";
 
 export interface EntityConfig {
   title: string;

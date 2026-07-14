@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 import DynamicField from "./DynamicField";
 import { DynamicFormProps } from "../../../types/dynamicform";
-import { api } from "../../services/api"; // ajuste o caminho conforme seu projeto
+import { useRelations } from "../../hooks/useRelation";
 
 export default function DynamicForm({
   metadata,
@@ -22,48 +22,7 @@ export default function DynamicForm({
     defaultValues: data ?? {},
   });
 
-  const [relatedData, setRelatedData] = useState<
-    Record<string, any[]>
-  >({});
-
-  useEffect(() => {
-
-    async function loadRelations() {
-
-      const selects = config.fields.filter(
-        field => field.type === "select"
-      );
-
-      const result: Record<string, any[]> = {};
-
-      for (const field of selects) {
-
-        if (!field.endpoint) continue;
-
-        try {
-
-          const response = await api.get(field.endpoint);
-
-          result[field.name] = response.data;
-
-        } catch (error) {
-
-          console.error(
-            `Erro ao carregar ${field.endpoint}`,
-            error
-          );
-
-        }
-
-      }
-
-      setRelatedData(result);
-
-    }
-
-    loadRelations();
-
-  }, [config]);
+  const { data: relatedData = {}, isLoading } = useRelations(metadata);
 
   return (
 
@@ -72,16 +31,16 @@ export default function DynamicForm({
       <h2>
 
         {type === "create"
-          ? `Cadastrar ${config.title}`
-          : `Editar ${config.title}`}
+          ? `Cadastrar ${metadata.title}`
+          : `Editar ${metadata.title}`}
 
       </h2>
 
       <div className="form-grid">
 
-        {config.fields
-          .filter(field => field.showInForm !== false)
-          .map(field => (
+        {metadata.fields
+          .filter((field: any) => field.showInForm !== false)
+          .map((field: any) => (
 
             <DynamicField
               key={field.name}

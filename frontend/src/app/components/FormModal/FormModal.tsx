@@ -1,25 +1,25 @@
 "use client";
 
 import "./FormModal.module.css";
-
+import { EntityConfig } from "../../../types/EntityConfigtesteee";
+import { FieldConfig } from "../../../types/FieldConfigtesteee";
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import styles from "./FormModal.module.css";
 import DynamicForm from "../DynamicForm/Dynamic.Form";
-import { createCrudService } from "../../services/crudService";
+import { useEntityMutation } from "../../hooks/useEntityMutation";
+
 
 export type FormContainerProps = {
-  table: string; // depois voltamos product | buyer | ...
+  entity: string; // depois voltamos product | buyer | ...
   type: "create" | "update" | "delete";
-  data?: any;
+  data?: FieldConfig;
   id?: number | string;
-  metadata: any; // Adicionando a propriedade metadata
+  metadata: EntityConfig; // Adicionando a propriedade metadata
 };
 
 export default function FormModal({
-  table,
+  entity,
   type,
   data,
   id,
@@ -28,61 +28,19 @@ export default function FormModal({
 
   const [open, setOpen] = useState(false);
   
-  const router = useRouter();
+ const mutation = useEntityMutation({
+    entity: entity,
+    type,
+    id,
+    metadata,
+});
+const handleSubmit = async (formData: any) => {
 
-  const service = createCrudService(table);
+    await mutation.mutateAsync(formData);
 
-  async function handleAction(formData?: any) {
+    setOpen(false);
 
-    try {
-
-      switch (type) {
-
-        case "create":
-          await service.create(formData);
-          break;
-
-        case "update":
-
-          if (!id)
-            throw new Error("Id is required");
-
-          await service.update(id, formData);
-          break;
-
-        case "delete":
-
-          if (!id)
-            throw new Error("Id is required");
-
-          await service.remove(id);
-          break;
-      }
-
-      toast.success(
-        `${metadata?.title ?? table} ${
-          type === "create"
-            ? "created"
-            : type === "update"
-            ? "updated"
-            : "deleted"
-        } successfully`
-      );
-
-      setOpen(false);
-
-      router.refresh();
-
-    } catch (error) {
-
-      console.error(error);
-
-      toast.error("Something went wrong");
-
-    }
-
-  }
-
+};
   return (
     <>
       <button
@@ -109,12 +67,12 @@ export default function FormModal({
 
                 <span className={styles.deleteMessage}>
                   Todos os dados serão perdidos.
-                  Tem certeza que deseja excluir este {metadata?.title ?? table}?
+                  Tem certeza que deseja excluir este {metadata?.title ?? entity}?
                 </span>
 
                 <button
                   className={styles.deleteConfirmButton}
-                  onClick={() => handleAction()}
+                  onClick={() => mutation.mutate(data)}
                 >
                   Excluir
                 </button>
@@ -131,7 +89,7 @@ export default function FormModal({
         metadata={metadata}
         type={type}
         data={data}
-        onSubmit={handleAction}
+        onSubmit={handleSubmit}
     />
 
 )}
@@ -149,5 +107,4 @@ export default function FormModal({
 
       )}
     </>
-  );
-}
+  );}

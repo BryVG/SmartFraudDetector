@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../services/api";
 import { createCrudService } from "../services/crudService";
 import { useMemo } from "react";
 import { metadataService } from "../services/metadata.service";
