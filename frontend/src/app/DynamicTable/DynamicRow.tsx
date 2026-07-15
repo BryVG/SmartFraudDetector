@@ -1,21 +1,21 @@
 import DynamicCell from "./DynamicCell";
 import FormModal from "../components/FormModal/FormModal";
-import { EntityConfig } from "@/types/EntityConfig";
+import { EntityConfig } from "@/types/EntityConfigtesteee";
 
 type Props = {
   entity: string;
   item: any;
-  config: EntityConfig;
+  metadata: EntityConfig;
 };
 
 export default function DynamicRow({
   entity,
   item,
-  config,
+  metadata,
 }: Props) {
 
 console.table(
-  config.fields.map(f => ({
+  metadata.fields.map(f => ({
     name: f.name,
     showInTable: f.showInTable,
     relation: f.relation,
@@ -24,7 +24,7 @@ console.table(
   return (
     <tr>
 
-      {config.fields
+      {metadata.fields
         .filter(f => f.showInTable)
         .map(field => {
 
@@ -48,18 +48,19 @@ console.table(
       <td>
 
         <FormModal
-          table={entity as any}
+          entity={entity as any}
           type="update"
           id={item.id}
           data={item}
+          metadata={metadata}
         />
 
         <FormModal
-          table={entity as any}
+          entity={entity as any}
           type="delete"
           id={item.id}
+          metadata={metadata}
         />
-
       </td>
 
     </tr>

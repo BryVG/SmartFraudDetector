@@ -3,7 +3,7 @@
 import DynamicHeader from "./DynamicHeader";
 import DynamicRow from "./DynamicRow";
 
-import { EntityConfig } from "../../types/EntityConfig";
+import { EntityConfig } from "../../types/EntityConfigtesteee";
 
 type Props<T> = {
   entity: string;
@@ -18,7 +18,7 @@ export default function DynamicTable<T>({
 }: Props<T>) {
   return (
     <table>
-      <DynamicHeader metadata={metadata} />
+      <DynamicHeader entity={metadata} />
 
       <tbody>
         {data.map((item: any) => (

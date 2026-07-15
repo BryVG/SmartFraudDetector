@@ -2,7 +2,7 @@
 
 import "./FormModal.module.css";
 import { EntityConfig } from "../../../types/EntityConfigtesteee";
-import { FieldConfig } from "../../../types/FieldConfigtesteee";
+// import { FieldConfig } from "../../../types/FieldConfigtesteee";
 import Image from "next/image";
 import { useState } from "react";
 import styles from "./FormModal.module.css";
@@ -13,7 +13,7 @@ import { useEntityMutation } from "../../hooks/useEntityMutation";
 export type FormContainerProps = {
   entity: string; // depois voltamos product | buyer | ...
   type: "create" | "update" | "delete";
-  data?: FieldConfig;
+  data?: any; // Substituir por FieldConfig quando disponível
   id?: number | string;
   metadata: EntityConfig; // Adicionando a propriedade metadata
 };
@@ -29,17 +29,14 @@ export default function FormModal({
   const [open, setOpen] = useState(false);
   
  const mutation = useEntityMutation({
-    entity: entity,
+    entity,
     type,
     id,
     metadata,
 });
 const handleSubmit = async (formData: any) => {
-
     await mutation.mutateAsync(formData);
-
     setOpen(false);
-
 };
   return (
     <>
@@ -67,23 +64,19 @@ const handleSubmit = async (formData: any) => {
 
                 <span className={styles.deleteMessage}>
                   Todos os dados serão perdidos.
-                  Tem certeza que deseja excluir este {metadata?.title ?? entity}?
+                  Tem certeza que deseja excluir este {metadata.title ?? entity}?
                 </span>
 
                 <button
                   className={styles.deleteConfirmButton}
-                  onClick={() => mutation.mutate(data)}
+                  onClick={handleSubmit}
                 >
                   Excluir
                 </button>
 
               </div>
 
-            ) : !metadata ? (
-
-    <p>Carregando...</p>
-
-) : (
+            ) : (
 
     <DynamicForm
         metadata={metadata}

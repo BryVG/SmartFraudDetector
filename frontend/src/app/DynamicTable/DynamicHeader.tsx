@@ -1,15 +1,15 @@
-import { EntityConfig } from "@/types/EntityConfig";
+import { EntityConfig } from "@/types/EntityConfigtesteee";
 
 type Props = {
-  config: EntityConfig;
+  entity: EntityConfig;
 };
 
 export default function DynamicHeader({
-  config,
+  entity,
 }: Props) {
-  console.log(config.fields);
+  console.log(entity.fields);
 console.table(
-  config.fields.map(f => ({
+  entity.fields.map(f => ({
     name: f.name,
     showInTable: f.showInTable,
   }))
@@ -18,7 +18,7 @@ console.table(
     <thead>
       <tr>
 
-        {config.fields
+        {entity.fields
           .filter(f => f.showInTable)
           .map(field => (
 

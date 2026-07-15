@@ -1,4 +1,4 @@
-import { FieldConfig } from "../../types/FieldConfig";
+import { FieldConfig } from "../../types/FieldConfigtesteee"
 
 type Props = {
   field: FieldConfig;
