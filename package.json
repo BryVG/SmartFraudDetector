@@ -1,0 +1,8 @@
+{
+  "name": "backend-pr",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
