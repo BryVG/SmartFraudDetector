@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { EntityConfig } from "@/types/EntityConfigtesteee";
+import { FieldConfig } from "../../types/FieldConfigtesteee";
 
-export function useRelations(metadata: any) {
+export function useRelations(metadata: EntityConfig) {
 
   return useQuery({
 
@@ -15,14 +17,14 @@ export function useRelations(metadata: any) {
     queryFn: async () => {
 
       const selects = metadata.fields.filter(
-        (field: any) => field.type === "select"
+        (field: FieldConfig) => field.type === "select"
       );
 
       const result: Record<string, any[]> = {};
 
       await Promise.all(
 
-        selects.map(async (field: any) => {
+        selects.map(async (field: FieldConfig) => {
 
           if (!field.endpoint) return;
 

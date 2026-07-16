@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-
 import { createCrudService } from "../services/crudService";
-
+import { EntityConfig } from "@/types/EntityConfigtesteee";
 
 type MutationType = 
     | "create"
@@ -18,7 +17,7 @@ interface UseEntityMutationProps {
 
     id?: number | string;
 
-    metadata?: any;
+    metadata?: EntityConfig;
 
 }
 
@@ -31,18 +30,13 @@ export function useEntityMutation({
 
 }: UseEntityMutationProps) {
 
-
     const queryClient = useQueryClient();
 
-
     const service = createCrudService(entity);
-
-
 
     return useMutation({
 
         mutationFn: async (formData?: any) => {
-
 
           switch (type) {
 
@@ -81,10 +75,7 @@ export function useEntityMutation({
                     ? "updated"
                     : "deleted"
                 } successfully`
-
             );
-
-
             queryClient.invalidateQueries({
 
                 queryKey:[
