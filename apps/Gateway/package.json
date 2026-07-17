@@ -1,5 +1,5 @@
 {
-  "name": "backend-pr",
+  "name": "gateway",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+     "@bryvg/shared": "file:../../packages/shared",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.1.27",
     "@nestjs/mapped-types": "*",

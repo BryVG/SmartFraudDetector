@@ -18,19 +18,6 @@
         "name": "next"
       }
     ],
-   "paths": {
-  "@/*": [
-    "./src/*"
-  ],
-
-  "@bryvg/shared": [
-    "../../packages/shared/src/index.ts"
-  ],
-
-  "@bryvg/shared/*": [
-    "../../packages/shared/src/*"
-  ]
-}
   },
   "include": [
     "next-env.d.ts",
