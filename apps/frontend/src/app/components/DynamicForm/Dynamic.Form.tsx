@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import DynamicField from "./DynamicField";
-import { DynamicFormProps } from "@shared";
+import { DynamicFormProps } from "@bryvg/shared";
 import { useRelations } from "../../hooks/useRelation";
 
 export default function DynamicForm({

@@ -7,3 +7,4 @@ export * from "./types/product";
 export * from "./types/purchaseItem";
 export * from "./types/purchaseOrder";
 export * from "./types/supplier";
+//# sourceMappingURL=index.js.map

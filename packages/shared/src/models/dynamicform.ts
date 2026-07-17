@@ -1,5 +1,5 @@
 
-import { EntityConfig } from "../types/EntityConfigtesteee"
+import { EntityConfig } from "./EntityConfigtesteee"
 
 
 export interface DynamicFormProps<T = any> {
