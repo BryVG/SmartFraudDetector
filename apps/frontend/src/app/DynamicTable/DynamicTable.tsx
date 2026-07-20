@@ -3,7 +3,7 @@
 import DynamicHeader from "./DynamicHeader";
 import DynamicRow from "./DynamicRow";
 
-import { EntityConfig } from "../../types/EntityConfigtesteee";
+import { EntityConfig } from "@bryvg/shared"
 
 type Props<T> = {
   entity: string;

@@ -1,6 +1,6 @@
 import DynamicCell from "./DynamicCell";
 import FormModal from "../components/FormModal/FormModal";
-import { EntityConfig } from "@/types/EntityConfigtesteee";
+import { EntityConfig } from "@bryvg/shared";
 
 type Props = {
   entity: string;

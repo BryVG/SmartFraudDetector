@@ -1,4 +1,4 @@
-import { FieldConfig } from "../../types/FieldConfigtesteee"
+import { FieldConfig } from "@bryvg/shared"
 
 type Props = {
   field: FieldConfig;

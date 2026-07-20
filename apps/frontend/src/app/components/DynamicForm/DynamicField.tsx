@@ -1,4 +1,4 @@
-import { FieldConfig } from "../../../types/FieldConfigtesteee";
+import { FieldConfig } from "@bryvg/shared";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 
 type DynamicFieldProps = {

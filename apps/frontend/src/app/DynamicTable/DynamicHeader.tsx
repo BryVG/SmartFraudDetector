@@ -1,4 +1,4 @@
-import { EntityConfig } from "@/types/EntityConfigtesteee";
+import { EntityConfig } from "@bryvg/shared";
 
 type Props = {
   entity: EntityConfig;

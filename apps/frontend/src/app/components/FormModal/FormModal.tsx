@@ -1,7 +1,7 @@
 "use client";
 
 import "./FormModal.module.css";
-import { EntityConfig } from "../../../types/EntityConfigtesteee";
+import { EntityConfig } from "@bryvg/shared";
 // import { FieldConfig } from "../../../types/FieldConfigtesteee";
 import Image from "next/image";
 import { useState } from "react";

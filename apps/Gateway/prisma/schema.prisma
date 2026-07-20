@@ -1,35 +1,23 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider  = "sqlserver"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
 model PurchaseOrder {
-  id            Int      @id @default(autoincrement())
-
-  orderNumber   String   @unique
-
-  createdAt     DateTime @default(now())
-
-  buyerId       Int
-  buyer         Buyer   @relation(fields: [buyerId], references: [id])
-
-  supplierId    Int
-  supplier       Supplier @relation(fields: [supplierId], references: [id])
-
-  totalAmount   Float?
-
-  items         PurchaseItem[]
+  id          Int            @id @default(autoincrement())
+  orderNumber String         @unique
+  createdAt   DateTime       @default(now())
+  buyerId     Int
+  supplierId  Int
+  totalAmount Float?
+  items       PurchaseItem[]
+  buyer       Buyer          @relation(fields: [buyerId], references: [id])
+  supplier    Supplier       @relation(fields: [supplierId], references: [id])
 
   @@index([supplierId])
   @@index([buyerId])
@@ -37,76 +25,54 @@ model PurchaseOrder {
 }
 
 model PurchaseItem {
-  id             Int      @id @default(autoincrement())
-
+  id              Int             @id @default(autoincrement())
   purchaseOrderId Int
-  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  productId       Int
+  quantity        Float
+  unitPrice       Float
+  totalPrice      Float
+  createdAt       DateTime        @default(now())
+  Measure         String?
+  unit            String?
+  fraudAnalysis   FraudAnalysis[]
+  product         Product         @relation(fields: [productId], references: [id])
+  purchaseOrder   PurchaseOrder   @relation(fields: [purchaseOrderId], references: [id])
 
-  productId      Int
-  product        Product @relation(fields: [productId], references: [id])
-
-  quantity       Float
-
-  unit String? 
-  Measure String?
-
-  unitPrice      Float
-  totalPrice     Float
-
-  fraudAnalysis  FraudAnalysis[]
-
-
-  createdAt      DateTime @default(now())
   @@unique([purchaseOrderId, productId])
-
   @@index([productId])
   @@index([purchaseOrderId])
   @@index([createdAt])
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-
-  name        String
-
-  StandardUnit String?
+  id              Int            @id @default(autoincrement())
+  name            String
   StandardMeasure String?
-
-  items       PurchaseItem[]
+  StandardUnit    String?
+  items           PurchaseItem[]
 }
 
 model Supplier {
-  id          Int      @id @default(autoincrement())
-
-  name        String
-
-  orders      PurchaseOrder[]
+  id     Int             @id @default(autoincrement())
+  name   String
+  orders PurchaseOrder[]
 }
 
-
 model Buyer {
-  id          Int      @id @default(autoincrement())
-
-  name        String
-
-  orders      PurchaseOrder[]
+  id     Int             @id @default(autoincrement())
+  name   String
+  orders PurchaseOrder[]
 }
 
 model FraudAnalysis {
-  id               Int      @id @default(autoincrement())
-
-  purchaseItemId   Int      
-  purchaseItem     PurchaseItem @relation(fields: [purchaseItemId], references: [id])
-
-  fraudScore       Float
-
-  suspicious       Boolean
-
-  reason           String?
-
-  createdAt        DateTime @default(now())
+  id             Int          @id @default(autoincrement())
+  purchaseItemId Int
+  fraudScore     Float
+  suspicious     Boolean
+  reason         String?
+  createdAt      DateTime     @default(now())
+  purchaseItem   PurchaseItem @relation(fields: [purchaseItemId], references: [id])
 
   @@index([suspicious])
   @@index([createdAt])
 }
-
