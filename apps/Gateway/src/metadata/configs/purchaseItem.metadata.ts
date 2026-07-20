@@ -1,4 +1,4 @@
-import { EntityConfig } from "../EntityConfig";
+import { EntityConfig } from "@bryvg/shared";
 
 export const purchaseItemMetadata = {
   title: "Purchase Item",
