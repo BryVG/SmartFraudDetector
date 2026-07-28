@@ -6,7 +6,8 @@ import {
 
 import { PrismaService }
 from '../../prisma/Prisma.service'
-
+import { buildDashboardWhere } from './utils/filters'
+import { DashboardFilterDto } from './dto/dashboard.filter.dto'
 @Injectable()
 export class DashboardService {
 
@@ -14,7 +15,7 @@ export class DashboardService {
     private prisma: PrismaService
   ) {}
 
-async getCards() {
+async getCards(filters: DashboardFilterDto) {
   const[totalContracts, monitoredValue, highRiskContracts, avgRisk] = await Promise.all([
     this.prisma.purchaseOrder.count(),
     this.prisma.purchaseOrder.aggregate({
@@ -53,7 +54,8 @@ async getCharts() {
     const[riskDistribution, topContracts, riskEvolution ] = await Promise.all([
     ])
 }
-async getRiskDistribution(filters: DashboardFiltersDto) {
+
+async getRiskDistribution(filters: DashboardFilterDto) {
 
     const where =
         buildDashboardWhere(filters);

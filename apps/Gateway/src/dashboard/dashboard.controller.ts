@@ -5,9 +5,11 @@ import {
   Put,
   Delete,
   Param,
-  Body
+  Body,
+  Query,
 } from '@nestjs/common'
 import { DashboardService } from './dashboard.service'
+import { DashboardFilterDto } from './dto/dashboard.filter.dto'
 @Controller('dashboard')
 export class DashboardController {
 
@@ -15,14 +17,14 @@ export class DashboardController {
     private readonly dashboardService: DashboardService
   ) {}
 
-  @Get()
-  findAll() {
-    return this.dashboardService.getCards()
+  @Get('cards')
+  getCards(@Query() filters: DashboardFilterDto) {
+    return this.dashboardService.getCards(filters)
   }
 
   @Get('charts')
-  getCharts() {
-    return this.dashboardService.getCharts()
+  getCharts(@Query() filters: DashboardFilterDto) {
+    return this.dashboardService.getCharts(filters)
   }
 
 }
