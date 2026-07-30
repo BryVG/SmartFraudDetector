@@ -6,14 +6,24 @@ import {
 
 import { PrismaService }
 from '../../prisma/Prisma.service'
+import { TopRiskFactory } from './strategy/TopRiskFactory'
 
 @Injectable()
 export class DashboardService {
 
   constructor(
-    private prisma: PrismaService
+    private prisma: PrismaService,
+    private factory: TopRiskFactory
   ) {}
 
+async getTopRisk(type:string, where:any){
+
+        const strategy =
+            this.factory.get(type);
+
+        return strategy.execute(where);
+
+    }
 async getCards() {
   const[totalContracts, monitoredValue, highRiskContracts, avgRisk] = await Promise.all([
     this.prisma.purchaseOrder.count(),
@@ -50,7 +60,7 @@ async getCards() {
 }
 
 async getCharts() {
-    const[riskDistribution, topContracts, riskEvolution ] = await Promise.all([
+    const[topContracts, riskEvolution ] = await Promise.all([
     ])
 }
 async getRiskDistribution(filters: DashboardFiltersDto) {
