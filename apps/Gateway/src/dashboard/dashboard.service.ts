@@ -49,7 +49,9 @@ async getCards(filters: DashboardFilterDto) {
     avgRisk: avgRisk._avg.fraudScore ?? 0
   }
 }
-
+async getTopRisk(type: string, where: any) {
+    
+}
 async getCharts() {
     const[riskDistribution, topContracts, riskEvolution ] = await Promise.all([
     ])
