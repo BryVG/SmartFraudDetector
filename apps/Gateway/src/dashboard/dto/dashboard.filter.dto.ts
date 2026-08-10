@@ -1,16 +1,17 @@
 export class DashboardFilterDto {
 
-    start?: string;
+  startDate?: Date;
 
-    end?: string;
+  endDate?: Date;
 
-    period?: "today"
-            | "week"
-            | "month"
-            | "year";
+  entity?:
+    | "contract"
+    | "product"
+    | "supplier"
+    | "buyer";
 
-    supplierId?: number;
+ supplierId?: number;
 
-    buyerId?: number;
+ buyerId?: number;
 
 }

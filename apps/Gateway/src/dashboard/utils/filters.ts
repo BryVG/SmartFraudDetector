@@ -1,21 +1,36 @@
-import {DashboardFilterDto} from "../dto/dashboard.filter.dto";
+import { DashboardFilterDto } from "../dto/dashboard.filter.dto";
 
-export function buildDashboardWhere(filters: DashboardFilterDto) {
-  
-    const where: any = {}
+export function buildDashboardWhere(
+  filters: DashboardFilterDto
+) {
 
-    if (filters.start && filters.end) {
-        where.purchaseDate = {
-            gte: new Date(filters.start),
-            lte: new Date(filters.end)
-        }
-    }
-    if (filters.buyerId) {
-        where.buyerId = filters.buyerId;
-    }
-    if (filters.supplierId) {
-        where.supplierId = filters.supplierId;
-    }
-    return where;
+  const where: Prisma.PurchaseOrderWhereInput = {};
 
+  if (
+    filters.startDate &&
+    filters.endDate
+  ) {
+
+    where.createdAt = {
+      gte: new Date(filters.startDate),
+      lte: new Date(filters.endDate)
+    };
+
+  }
+
+  if (filters.supplierId) {
+
+    where.supplierId =
+      filters.supplierId;
+
+  }
+
+  if (filters.buyerId) {
+
+    where.buyerId =
+      filters.buyerId;
+
+  }
+
+  return where;
 }
