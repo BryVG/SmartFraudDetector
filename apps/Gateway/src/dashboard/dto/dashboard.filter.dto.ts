@@ -8,7 +8,7 @@ export class DashboardFilterDto {
     | "contract"
     | "product"
     | "supplier"
-    | "buyer";
+    | "buyer" | string;
 
  supplierId?: number;
 

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EvolutionStrategy } from "./EvolutionStrategy";
-import { SupplierStrategy } from "../supplierStrategy";
+import { SupplierStrategy } from "./supplierStrategy";
 import { ProductEvolutionStrategy } from "./ProductStrategy";
 import { ContractEvolutionStrategy } from "./ContractsStrategy";
 
@@ -12,7 +12,7 @@ export class EvolutionFactory {
         private product: ProductEvolutionStrategy,
         private contract: ContractEvolutionStrategy
     ) {}
-
+    
     get(type: string): EvolutionStrategy{
         const map={
             supplier:this.supplier,

@@ -14,7 +14,7 @@ export class TopRiskFactory {
         private buyer: BuyerStrategy
     ) {}
 
-    get(type: string): EvolutionStrategy{
+    get(type: string): TopRiskStrategy{
         const map={
             supplier:this.supplier,
             product:this.product,

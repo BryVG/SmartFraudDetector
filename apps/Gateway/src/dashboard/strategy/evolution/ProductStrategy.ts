@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import {Prisma} from '@prisma/client';
 import { PrismaService } from "../../../../prisma/Prisma.service";
-import { EvolutionStrategy } from "./EvolutionStrategy";
+import {
+  EvolutionStrategy,
+  GroupBy
+} from "./EvolutionStrategy";
+import { groupEvolution } from "../../utils/groupEvolution";
 @Injectable()
 export class ProductEvolutionStrategy
 implements EvolutionStrategy{
@@ -10,35 +14,48 @@ implements EvolutionStrategy{
         private prisma: PrismaService
     ){}
 
-    async execute(where: Prisma.PurchaseOrderWhereInput){
+async execute(
+    where: Prisma.PurchaseOrderWhereInput,
+    groupBy: GroupBy
+) {
 
-        return this.prisma.product.findMany({
+  const products = await this.prisma.product.findMany({
 
-            include:{
+    select: {
 
-                items:{
+      items: {
 
-                    include:{
+        select: {
 
-                        fraudAnalysis:{
-                            fraudScore:{
-                                gt: 80
-                            }
+          purchaseOrder: {
+            select: {
+              createdAt: true
+            },
+            where
+          },
 
-                        purchaseOrder:{
-
-                            where
-
-                        }}
-
-                    }
-
-                }
-
+          fraudAnalysis: {
+            where: {
+              suspicious: true
             }
+          }
 
-        });
+        }
+
+      }
 
     }
+  });
 
-}
+const data =
+  products.flatMap(product =>
+    product.items.map(item => ({
+      date: item.purchaseOrder.createdAt,
+
+      fraudulent:
+        item.fraudAnalysis.length > 0
+    }))
+  );
+
+  return groupEvolution(data, groupBy);
+}}

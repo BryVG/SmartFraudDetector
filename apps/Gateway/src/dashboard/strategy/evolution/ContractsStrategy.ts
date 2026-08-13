@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../../prisma/Prisma.service";
-
+import {EvolutionPoint} from "../../utils/groupEvolution"
 import {
   EvolutionStrategy,
-  EvolutionPoint,
   GroupBy
 } from "./EvolutionStrategy";
+import { groupEvolution } from "../../utils/groupEvolution";
 
 @Injectable()
 export class ContractEvolutionStrategy
@@ -29,8 +29,6 @@ export class ContractEvolutionStrategy
 
         select: {
 
-          id: true,
-
           createdAt: true,
 
           items: {
@@ -41,7 +39,7 @@ export class ContractEvolutionStrategy
 
                 select: {
 
-                  fraudScore: true
+                  suspicious: true
 
                 }
 
@@ -54,96 +52,14 @@ export class ContractEvolutionStrategy
         }
 
       });
+      const data = contracts.map(contract => ({
+  date: contract.createdAt,
 
-    // Agrupa os contratos por período
-    const grouped =
-      new Map<
-        string,
-        {
-          total: number;
-          fraudulent: number;
-        }
-      >();
+  fraudulent: contract.items.some(item =>
+    item.fraudAnalysis.length > 0
+  )
+}));
 
-    for (const contract of contracts) {
-
-      const period =
-        this.getPeriod(
-          contract.createdAt,
-          groupBy
-        );
-
-      if (!grouped.has(period)) {
-
-        grouped.set(period, {
-          total: 0,
-          fraudulent: 0
-        });
-
-      }
-
-      const data =
-        grouped.get(period)!;
-
-      data.total++;
-
-      const hasFraud =
-        contract.items.some(item =>
-          item.fraudAnalysis.some(
-            analysis =>
-              analysis.fraudScore >= 80
-          )
-        );
-
-      if (hasFraud) {
-        data.fraudulent++;
-      }
-
-    }
-
-    return Array.from(
-      grouped,
-      ([period, data]) => ({
-        period,
-        ...data
-      })
-    );
-
-  }
-
-  private getPeriod(
-    date: Date,
-    groupBy: GroupBy
-  ): string {
-
-    switch (groupBy) {
-
-      case "hour":
-
-        return date
-          .toISOString()
-          .slice(0, 13);
-
-      case "day":
-
-        return date
-          .toISOString()
-          .slice(0, 10);
-
-      case "month":
-
-        return date
-          .toISOString()
-          .slice(0, 7);
-
-      case "year":
-
-        return date
-          .toISOString()
-          .slice(0, 4);
-
-    }
-
-  }
-
+    return groupEvolution(data, groupBy);
+  } 
 }

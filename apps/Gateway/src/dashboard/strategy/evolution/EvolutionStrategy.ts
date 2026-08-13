@@ -1,19 +1,12 @@
 
 import {Prisma} from '@prisma/client';
-
+import { EvolutionPoint } from "../../utils/groupEvolution";
 export type GroupBy =
     | "hour"
     | "day"
     | "month"
     | "year";
 
-export interface EvolutionPoint {
-    period: String;
-
-    total: number;
-
-    fraudulent: number;
-}
     
 export interface EvolutionStrategy {
     
