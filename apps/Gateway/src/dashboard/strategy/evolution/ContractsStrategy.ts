@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-
 import { PrismaService } from "../../../../prisma/Prisma.service";
 import {EvolutionPoint} from "../../utils/groupEvolution"
 import {

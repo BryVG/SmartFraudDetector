@@ -1,10 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { TopRiskStrategy } from "./topriskStrategy";
-import { SupplierStrategy } from "../supplierStrategy";
+import { TopRiskStrategy, TopRiskType } from "./topriskStrategy";
+import { SupplierStrategy } from "./supplierStrategy";
 import { ProductStrategy } from "./productStrategy";
 import { BuyerStrategy } from "./buyerStrategy";
 import { EvolutionStrategy } from "../evolution/EvolutionStrategy";
 
+export type TopRiskPoint = {
+  id: number;
+  name: string;
+  total: number;
+  suspicious: number;
+  rate: number;
+};
 @Injectable()
 export class TopRiskFactory {
   
@@ -14,7 +21,7 @@ export class TopRiskFactory {
         private buyer: BuyerStrategy
     ) {}
 
-    get(type: string): TopRiskStrategy{
+    get(type: TopRiskType): TopRiskStrategy{
         const map={
             supplier:this.supplier,
             product:this.product,

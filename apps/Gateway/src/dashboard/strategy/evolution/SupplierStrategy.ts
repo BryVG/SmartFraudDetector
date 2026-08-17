@@ -5,6 +5,7 @@ import {
   EvolutionStrategy,
   GroupBy
 } from "./EvolutionStrategy";
+import {EvolutionPoint} from "../../utils/groupEvolution"
 import { groupEvolution } from "../../utils/groupEvolution";
 @Injectable()
 export class SupplierEvolutionStrategy
@@ -17,7 +18,7 @@ implements EvolutionStrategy{
 async execute(
     where: Prisma.PurchaseOrderWhereInput,
     groupBy: GroupBy
-) {
+):Promise<EvolutionPoint[]> {
 
   const suppliers = await this.prisma.supplier.findMany({
 
@@ -25,8 +26,9 @@ async execute(
 
       orders: {
         where,
-        select: {
         
+        select: {
+          createdAt:true,
           items: {
             select: {
 
@@ -44,14 +46,12 @@ async execute(
   });
 
 const data =
-  suppliers.map(supplier =>
-    supplier.orders.some(order => ({
+  suppliers.flatMap(supplier =>
+    supplier.orders.map(order => ({
       date: order.createdAt,
 
       fraudulent:
-        supplier.orders.some(order => 
           order.items.some(item => item.fraudAnalysis.length > 0)
-        )
     }))
   );
 
