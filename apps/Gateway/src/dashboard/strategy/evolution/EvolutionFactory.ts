@@ -3,7 +3,13 @@ import { EvolutionStrategy } from "./EvolutionStrategy";
 import { SupplierStrategy } from "./supplierStrategy";
 import { ProductEvolutionStrategy } from "./ProductStrategy";
 import { ContractEvolutionStrategy } from "./ContractsStrategy";
+import { TopRiskType } from "../top-risk/topriskStrategy";
 
+export type EvolutionType = 
+    "supplier" 
+    | "product" 
+    | "contract"
+;
 @Injectable()
 export class EvolutionFactory {
   
@@ -13,7 +19,7 @@ export class EvolutionFactory {
         private contract: ContractEvolutionStrategy
     ) {}
     
-    get(type: string): EvolutionStrategy{
+    get(type: EvolutionType): EvolutionStrategy{
         const map={
             supplier:this.supplier,
             product:this.product,

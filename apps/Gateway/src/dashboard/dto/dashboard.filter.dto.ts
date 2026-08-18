@@ -1,3 +1,5 @@
+import { EvolutionType } from "../strategy/evolution/EvolutionFactory";
+
 export class DashboardFilterDto {
 
   startDate?: Date;
@@ -5,10 +7,7 @@ export class DashboardFilterDto {
   endDate?: Date;
 
   entity?:
-    | "contract"
-    | "product"
-    | "supplier"
-    | "buyer" | string;
+    EvolutionType
 
  supplierId?: number;
 
