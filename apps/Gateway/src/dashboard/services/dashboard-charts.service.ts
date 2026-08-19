@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DashboardFilterDto } from "../dto/dashboard.filter.dto";
 import { buildDashboardWhere } from "../utils/filters";
 import { getEvolutionPeriod } from "../utils/getEvolutionPeriod";
-import { EvolutionFactory } from "../strategy/evolution/EvolutionFactory";
+import { EvolutionFactory, EvolutionType } from "../strategy/evolution/EvolutionFactory";
 import { BadRequestException } from "@nestjs/common";
 
 @Injectable()
@@ -13,7 +13,8 @@ export class DashboardChartsService {
   ) {}
 
 async getEvolution(
-  filters: DashboardFilterDto
+  filters: DashboardFilterDto,
+  entity: EvolutionType
 ) {
 
   const where =
@@ -36,7 +37,7 @@ async getEvolution(
 
   const strategy =
     this.evolutionFactory.get(
-      filters.entity 
+      entity
     );
 
   return strategy.execute(

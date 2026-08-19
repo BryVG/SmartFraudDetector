@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import {Prisma} from '@prisma/client';
 import { PrismaService } from "../../../../prisma/Prisma.service";
-import { TopRiskStrategy } from "./topriskStrategy";
+import { TopRiskPoint, TopRiskStrategy } from "./topriskStrategy";
+import { calculateRisk } from "../../utils/calculateRisk";
 @Injectable()
 export class ProductStrategy
 implements TopRiskStrategy {
@@ -10,21 +11,22 @@ implements TopRiskStrategy {
         private prisma: PrismaService
     ) {}
 
-    execute(where: Prisma.PurchaseOrderWhereInput){
+   async execute(where: Prisma.PurchaseOrderWhereInput): Promise<TopRiskPoint[]> {
 
-return this.prisma.product.findMany({
+const products = await this.prisma.product.findMany({
 
-    include: {
-
+    select: {
+        id: true,
+        name: true,
         items: {
-
+            
             where: {
 
                 purchaseOrder: where
 
             },
 
-            include: {
+            select: {
 
                 fraudAnalysis: true,
 
@@ -36,4 +38,17 @@ return this.prisma.product.findMany({
 
     }
 
-})}}
+})
+      const data = products.map(products =>{
+            const items = products.items.flatMap(items => products.items);
+            const risk = calculateRisk(items);
+
+            return {
+                id: products.id,
+                name: products.name,
+                ...risk
+            };
+        })
+       return data.sort((a, b) => b.suspicious - a.suspicious).slice(0, 10);
+    }}
+      

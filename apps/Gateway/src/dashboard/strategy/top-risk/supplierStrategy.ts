@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {Prisma} from '@prisma/client';
 import { PrismaService } from "../../../../prisma/Prisma.service";
 import { TopRiskStrategy } from "./topriskStrategy";
-import { TopRiskPoint } from "./TopRiskFactory";
+import { TopRiskPoint } from "./topriskStrategy";
 import { calculateRisk } from "../../utils/calculateRisk";
 @Injectable()
 export class SupplierStrategy
