@@ -30,8 +30,6 @@ const products = await this.prisma.product.findMany({
 
                 fraudAnalysis: true,
 
-                purchaseOrder: true
-
             }
 
         }
@@ -40,7 +38,7 @@ const products = await this.prisma.product.findMany({
 
 })
       const data = products.map(products =>{
-            const items = products.items.flatMap(items => products.items);
+            const items = products.items
             const risk = calculateRisk(items);
 
             return {
