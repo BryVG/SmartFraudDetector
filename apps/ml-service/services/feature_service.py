@@ -72,3 +72,21 @@ class FeatureService:
         )
 
         print("Artifacts carregados com sucesso.")
+        
+    def buscar_referencia_preco(self, descricao, unidade):
+
+        referencias = self.referencias_preco
+
+        resultado = referencias[
+            (referencias["descricao_normalizada"] == descricao)
+            &
+            (
+                referencias["unidadeMedida"].fillna("").astype(str)
+                == str(unidade)
+            )
+        ]
+
+        if resultado.empty:
+            return None
+
+        return resultado.iloc[0].to_dict()
