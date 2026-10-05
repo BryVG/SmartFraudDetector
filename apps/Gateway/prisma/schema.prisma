@@ -1,0 +1,98 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model PurchaseOrder {
+  id          Int            @id @default(autoincrement())
+  orderNumber String         @unique
+  createdAt   DateTime       @default(now())
+  buyerId     Int
+  supplierId  Int
+  totalAmount Float?
+  items       PurchaseItem[]
+  buyer       Buyer          @relation(fields: [buyerId], references: [id])
+  supplier    Supplier       @relation(fields: [supplierId], references: [id])
+
+  @@index([supplierId])
+  @@index([buyerId])
+  @@index([createdAt])
+}
+
+model PurchaseItem {
+  id              Int             @id @default(autoincrement())
+  purchaseOrderId Int
+  productId       Int
+  quantity        Float
+  unitPrice       Float
+  totalPrice      Float
+  createdAt       DateTime        @default(now())
+  Measure         String?
+  unit            String?
+  fraudAnalysis   FraudAnalysis
+  fraudeAnalysisId Int @Unique
+  product         Product         @relation(fields: [productId], references: [id])
+  purchaseOrder   PurchaseOrder   @relation(fields: [purchaseOrderId], references: [id])
+
+  @@unique([purchaseOrderId, productId])
+  @@index([productId])
+  @@index([purchaseOrderId])
+  @@index([createdAt])
+}
+
+model Product {
+  id              Int            @id @default(autoincrement())
+  name            String
+  StandardMeasure String?
+  StandardUnit    String?
+  items           PurchaseItem[]
+}
+
+model Supplier {
+  id     Int             @id @default(autoincrement())
+  name   String
+  orders PurchaseOrder[]
+}
+
+model Buyer {
+  id     Int             @id @default(autoincrement())
+  name   String
+  orders PurchaseOrder[]
+}
+
+model FraudAnalysis {
+  id             Int          @id @default(autoincrement())
+  purchaseItemId Int          @unique
+  fraudScore     Float
+  suspicious     Boolean
+  reason         String?
+  createdAt      DateTime     @default(now())
+  purchaseItem   PurchaseItem
+  fraudrule      FraudRule[] 
+
+  @@index([suspicious])
+  @@index([createdAt])
+}
+
+model FraudRule {
+
+  id Int @id @default(autoincrement())
+
+  code String
+
+  title String
+
+  description String
+
+  severity Severity
+
+  weight Float
+
+  fraudeAnalysisId Int
+  fraudAnalysis   FraudAnalysis @relation(fields: [fraudeAnalysisId], references: [id])
+}
