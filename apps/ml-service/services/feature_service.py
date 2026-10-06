@@ -640,47 +640,48 @@ class FeatureService:
 
         else:
 
-                valores = pd.to_numeric(
-                    contratos_anteriores["valorGlobal"],
-                    errors="coerce"
-                ).dropna()
+            valores = pd.to_numeric(
+                contratos_anteriores["valorGlobal"],
+                errors="coerce"
+            ).dropna()
 
-                log_valores = np.log1p(
-                    valores.clip(lower=0)
+            log_valores = np.log1p(
+                valores.clip(lower=0)
+            )
+
+            mediana = np.median(log_valores)
+
+            q1 = np.percentile(
+                log_valores,
+                25
+            )
+
+            q3 = np.percentile(
+                log_valores,
+                75
+            )
+
+            iqr = q3 - q1
+
+            mad = np.median(
+                np.abs(
+                    log_valores - mediana
                 )
+            )
 
-                mediana = np.median(log_valores)
+            escala = max(
+                mad * 1.4826,
+                iqr / 1.349,
+                0.05
+            )
 
-                q1 = np.percentile(
-                    log_valores,
-                    25
-                )
-
-                q3 = np.percentile(
-                    log_valores,
-                    75
-                )
-
-                iqr = q3 - q1
-
-                mad = np.median(
-                    np.abs(
-                        log_valores - mediana
-                    )
-                )
-
-                escala = max(
-                    mad * 1.4826,
-                    iqr / 1.349,
-                    0.05
-                )
-                valor_atual = (
+            valor_atual = (
+                historico_concorrencia[
                     historico_concorrencia[
-                        historico_concorrencia[
-                            "dataPublicacaoPncp"
-                        ] == data_compra
-                    ]["valorUnitarioHomologado"]
-                )
+                        "dataPublicacaoPncp"
+                    ] == data_compra
+                ]["valorUnitarioHomologado"]
+            )
 
             # Para o MVP, usamos o valorGlobal da compra
             # quando disponível no histórico da API.
@@ -694,7 +695,7 @@ class FeatureService:
 
                 log_score_contrato = self.metadata[
                     "referencias_neutras"
-                ]["log_score_contrato_orgao_hist"]
+                ]["log_score_contrato_orgao_v2"]
 
                 contrato_sem_referencia = 1
 
@@ -727,12 +728,11 @@ class FeatureService:
                         distancia_log_contrato
                     )
 
-                        contrato_sem_referencia = 0
+                    contrato_sem_referencia = 0
 
-                    log_contratos_orgao_hist = np.log1p(
-                        quantidade_contratos
-                    )
-
+                log_contratos_orgao_hist = np.log1p(
+                    quantidade_contratos
+                )
         return {
             "log_desvio_concorrencia_v2":
                 log_desvio_concorrencia,
