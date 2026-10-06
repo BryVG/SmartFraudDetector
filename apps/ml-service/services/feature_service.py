@@ -1,22 +1,23 @@
 import joblib
 import pandas as pd
+import numpy as np
 
 
 class FeatureService:
 
     def __init__(self):
-        self.model_path = "artifacts/isolation_forest_final.joblib"
-        self.features_path = "artifacts/features_iforest_final.joblib"
-        self.metadata_path = "artifacts/metadata_modelo.joblib"
+        self.model_path = "artifacts/isolation_forest_causal_31.joblib"
+        self.features_path = "artifacts/features_iforest_causal_31.joblib"
+        self.metadata_path = "artifacts/metadata_modelo_causal_31.joblib"
 
-        self.historico_api_path = "artifacts/historico_api.parquet"
-        self.referencias_preco_path = "artifacts/referencias_preco.parquet"
-        self.referencias_quantidade_path = "artifacts/referencias_quantidade.parquet"
-        self.historico_fornecedor_path = "artifacts/historico_fornecedor.parquet"
-        self.historico_orgao_path = "artifacts/historico_orgao.parquet"
-        self.historico_concorrencia_path = "artifacts/historico_concorrencia.parquet"
-        self.historico_temporal_path = "artifacts/historico_temporal.parquet"
-        self.historico_contratos_path = "artifacts/historico_contratos.parquet"
+        self.historico_api_path = "artifacts/historico_api_causal.parquet"
+        self.referencias_preco_path = "artifacts/referencias_preco_causal.parquet"
+        self.referencias_quantidade_path = "artifacts/referencias_quantidade_causal.parquet"
+        self.historico_fornecedor_path = "artifacts/historico_fornecedor_causal.parquet"
+        self.historico_orgao_path = "artifacts/historico_orgao_causal.parquet"
+        self.historico_concorrencia_path = "artifacts/historico_concorrencia_causal.parquet"
+        self.historico_temporal_path = "artifacts/historico_temporal_causal.parquet"
+        self.historico_contratos_path = "artifacts/historico_contratos_causal.parquet"
 
         self._carregar_artifacts()
 
@@ -161,9 +162,16 @@ class FeatureService:
             referencia_preco["mediana_log"]
         )
 
-        score_preco = (
-            distancia_log /
-            referencia_preco["escala_robusta"]
+        mediana_preco = np.expm1(
+            referencia_preco["mediana_log"]
+        )
+
+        desvio_percentual_abs = abs(
+            (preco / mediana_preco) - 1
+        )
+
+        log_desvio_preco = np.log1p(
+            desvio_percentual_abs
         )
 
         # ============================================================
@@ -177,9 +185,16 @@ class FeatureService:
             referencia_quantidade["mediana_log_qtd"]
         )
 
-        score_quantidade = (
-            distancia_log_qtd /
-            referencia_quantidade["escala_robusta_qtd"]
+        mediana_quantidade = np.expm1(
+            referencia_quantidade["mediana_log_qtd"]
+        )
+
+        desvio_percentual_quantidade_abs = abs(
+            (quantidade / mediana_quantidade) - 1
+        )
+
+        log_desvio_quantidade = np.log1p(
+            desvio_percentual_quantidade_abs
         )
 
         # ============================================================
@@ -196,8 +211,8 @@ class FeatureService:
             "quantidade_historico":
                 referencia_quantidade["registros"],
 
-            "log_desvio_preco": score_preco,
-            "log_desvio_quantidade": score_quantidade
+            "log_desvio_preco": log_desvio_preco,
+            "log_desvio_quantidade": log_desvio_quantidade
         }
     def calcular_features_consistencia(
         self,
@@ -241,7 +256,7 @@ class FeatureService:
         data_compra
     ):
 
-        historico = self.historico_fornecedor
+        historico = self.historico_fornecedor.copy()
 
         data_compra = pd.to_datetime(data_compra)
 
@@ -249,9 +264,11 @@ class FeatureService:
             (historico["descricao_normalizada"] == descricao)
             &
             (historico["dataPublicacaoPncp"] < data_compra)
-        ]
+        ].copy()
 
-        total_historico = len(historico_anterior)
+        total_historico = historico_anterior[
+            "_qtd_evento_fornecedor"
+        ].sum()
 
         if total_historico < 3:
 
@@ -267,12 +284,14 @@ class FeatureService:
             == str(fornecedor)
         ]
 
-        quantidade_fornecedor = len(historico_fornecedor)
+        quantidade_fornecedor = historico_fornecedor[
+            "_qtd_evento_fornecedor"
+        ].sum()
 
         share = quantidade_fornecedor / total_historico
 
         return {
-            "share_hist_pf_v2": share,
+            "share_hist_pf_v2": float(share),
             "share_sem_referencia": 0
         }
     
@@ -283,19 +302,21 @@ class FeatureService:
         data_compra
     ):
         historico = self.historico_fornecedor.copy()
+
         data_compra = pd.to_datetime(data_compra)
 
-        # Considera apenas eventos anteriores à compra analisada.
         historico_anterior = historico[
             (historico["descricao_normalizada"] == descricao)
-            & (historico["dataPublicacaoPncp"] < data_compra)
-        ]
-
-        total_historico = len(historico_anterior)
+            &
+            (historico["dataPublicacaoPncp"] < data_compra)
+        ].copy()
 
         neutros = self.metadata["referencias_neutras"]
 
-        # Sem pelo menos 3 registros anteriores, não há referência suficiente.
+        total_historico = historico_anterior[
+            "_qtd_evento_fornecedor"
+        ].sum()
+
         if total_historico < 3:
             return {
                 "inverso_concentracao_hist_v2": neutros[
@@ -306,24 +327,23 @@ class FeatureService:
                 "exclusivo_sem_referencia": 1
             }
 
-        # Participação de cada fornecedor no histórico do produto.
         contagens = (
-            historico_anterior["niFornecedor"]
-            .astype(str)
-            .value_counts()
+            historico_anterior
+            .groupby("niFornecedor")["_qtd_evento_fornecedor"]
+            .sum()
         )
 
         participacoes = contagens / total_historico
 
-        # HHI: soma dos quadrados das participações.
         hhi = (participacoes ** 2).sum()
 
-        # Quanto menor a concentração, maior o valor deste indicador.
         inverso_concentracao = 1 - hhi
 
-        # Exclusividade: só é avaliada com pelo menos 3 eventos anteriores.
         fornecedor = str(fornecedor)
-        fornecedores_historicos = set(contagens.index)
+
+        fornecedores_historicos = set(
+            contagens.index.astype(str)
+        )
 
         exclusivo = int(
             len(fornecedores_historicos) == 1
@@ -344,14 +364,13 @@ class FeatureService:
         descricao,
         orgao,
         quantidade,
-        data_compra
+        data_compra,
+        numeroControlePNCP
     ):
-        import numpy as np
-
         data_compra = pd.to_datetime(data_compra)
 
         # ============================================================
-        # 1. ÓRGÃO + PRODUTO + QUANTIDADE
+        # ÓRGÃO × PRODUTO — HISTÓRICO CAUSAL
         # ============================================================
 
         historico_orgao = self.historico_orgao.copy()
@@ -360,125 +379,145 @@ class FeatureService:
             historico_orgao["dataPublicacaoPncp"]
         )
 
-        # Somente eventos anteriores ao evento atual.
         historico_anterior = historico_orgao[
             (historico_orgao["orgaoEntidade.cnpj"].astype(str) == str(orgao))
-            &
-            (historico_orgao["descricao_normalizada"] == descricao)
-            &
-            (historico_orgao["dataPublicacaoPncp"] < data_compra)
+            & (historico_orgao["descricao_normalizada"] == descricao)
+            & (historico_orgao["dataPublicacaoPncp"] < data_compra)
         ]
 
         if len(historico_anterior) < 3:
 
-            log_qty_vs_orgao = self.metadata["referencias_neutras"][
-                "log_qty_vs_orgao_hist_v2"
-            ]
+            log_qty_vs_orgao = (
+                self.metadata["referencias_neutras"]
+                ["log_qty_vs_orgao_hist_v2"]
+            )
 
             orgao_qty_sem_referencia = 1
 
         else:
 
-            quantidade_media = (
-                pd.to_numeric(
-                    historico_anterior["quantidade"],
-                    errors="coerce"
-                )
-                .dropna()
-                .mean()
-            )
+            quantidade_media = pd.to_numeric(
+                historico_anterior["quantidade"],
+                errors="coerce"
+            ).dropna().mean()
 
             if pd.isna(quantidade_media) or quantidade_media <= 0:
 
-                log_qty_vs_orgao = self.metadata["referencias_neutras"][
-                    "log_qty_vs_orgao_hist_v2"
-                ]
+                log_qty_vs_orgao = (
+                    self.metadata["referencias_neutras"]
+                    ["log_qty_vs_orgao_hist_v2"]
+                )
 
                 orgao_qty_sem_referencia = 1
 
             else:
 
-                razao_quantidade = (
-                    float(quantidade) /
-                    quantidade_media
-                )
+                razao_quantidade = float(quantidade) / quantidade_media
 
-                log_qty_vs_orgao = np.log1p(
-                    razao_quantidade
-                )
+                log_qty_vs_orgao = np.log1p(razao_quantidade)
 
                 orgao_qty_sem_referencia = 0
 
         # ============================================================
-        # 2. HISTÓRICO TEMPORAL
+        # EVENTOS TEMPORAIS — MESMA LÓGICA DO MODELO 3.1
         # ============================================================
 
-        historico_temporal = self.historico_temporal.copy()
+        historico_api = self.historico_api.copy()
 
-        historico_temporal["dataPublicacaoPncp"] = pd.to_datetime(
-            historico_temporal["dataPublicacaoPncp"]
+        historico_api["dataPublicacaoPncp"] = pd.to_datetime(
+            historico_api["dataPublicacaoPncp"]
         )
 
-        # ============================================================
-        # 2.1 MESMO DIA — SOMENTE EVENTOS ANTERIORES
-        # ============================================================
+        # Cada numeroControlePNCP representa uma compra/evento.
+        eventos = (
+            historico_api[
+                [
+                    "numeroControlePNCP",
+                    "dataPublicacaoPncp"
+                ]
+            ]
+            .dropna(subset=["numeroControlePNCP"])
+            .drop_duplicates("numeroControlePNCP")
+            .copy()
+        )
 
-        mesmo_dia = historico_temporal[
-            (
-                historico_temporal["dataPublicacaoPncp"].dt.date
-                == data_compra.date()
-            )
-            &
-            (
-                historico_temporal["dataPublicacaoPncp"]
-                < data_compra
-            )
+        # Mesmo ordenamento determinístico utilizado na reconstrução causal.
+        eventos = eventos.sort_values(
+            ["dataPublicacaoPncp", "numeroControlePNCP"]
+        ).reset_index(drop=True)
+
+        eventos["data"] = eventos["dataPublicacaoPncp"].dt.date
+
+        eventos["registros_mesmo_dia_anteriores"] = (
+            eventos.groupby("data").cumcount()
+        )
+
+        eventos["minuto"] = (
+            eventos["dataPublicacaoPncp"].dt.floor("min")
+        )
+
+        eventos["registros_mesmo_minuto_anteriores"] = (
+            eventos.groupby("minuto").cumcount()
+        )
+
+        evento_atual = eventos[
+            eventos["numeroControlePNCP"].astype(str)
+            == str(numeroControlePNCP)
         ]
 
-        registros_mesmo_dia = len(mesmo_dia)
+        # ------------------------------------------------------------
+        # Fallback:
+        # se o número do controle não foi informado pelo método,
+        # reproduzimos a posição temporal pelo timestamp.
+        # ------------------------------------------------------------
+
+        if evento_atual.empty:
+
+            anteriores_dia = eventos[
+                eventos["dataPublicacaoPncp"] < data_compra
+            ]
+
+            registros_mesmo_dia = (
+                anteriores_dia[
+                    anteriores_dia["data"]
+                    == data_compra.date()
+                ]["numeroControlePNCP"]
+                .nunique()
+            )
+
+            registros_mesmo_minuto = (
+                anteriores_dia[
+                    anteriores_dia["dataPublicacaoPncp"].dt.floor("min")
+                    == data_compra.floor("min")
+                ]["numeroControlePNCP"]
+                .nunique()
+            )
+
+        else:
+
+            evento = evento_atual.iloc[0]
+
+            registros_mesmo_dia = int(
+                evento["registros_mesmo_dia_anteriores"]
+            )
+
+            registros_mesmo_minuto = int(
+                evento["registros_mesmo_minuto_anteriores"]
+            )
 
         log_registros_mesmo_dia = np.log1p(
             registros_mesmo_dia
         )
 
-        # ============================================================
-        # 2.2 MESMO MINUTO — SOMENTE EVENTOS ANTERIORES
-        # ============================================================
-
-        mesmo_minuto = historico_temporal[
-            (
-                historico_temporal["dataPublicacaoPncp"].dt.floor("min")
-                == data_compra.floor("min")
-            )
-            &
-            (
-                historico_temporal["dataPublicacaoPncp"]
-                < data_compra
-            )
-        ]
-
-        registros_mesmo_minuto = len(mesmo_minuto)
-
         log_contracts_same_minute = np.log1p(
             registros_mesmo_minuto
         )
 
-        # ============================================================
-        # RETORNO
-        # ============================================================
-
         return {
-            "log_qty_vs_orgao_hist_v2":
-                log_qty_vs_orgao,
-
-            "orgao_qty_sem_referencia_v2":
-                orgao_qty_sem_referencia,
-
-            "log_registros_mesmo_dia":
-                log_registros_mesmo_dia,
-
-            "log_contracts_same_minute":
-                log_contracts_same_minute
+            "log_qty_vs_orgao_hist_v2": log_qty_vs_orgao,
+            "orgao_qty_sem_referencia_v2": orgao_qty_sem_referencia,
+            "log_registros_mesmo_dia": log_registros_mesmo_dia,
+            "log_contracts_same_minute": log_contracts_same_minute
         }
 
     def calcular_features_concorrencia_contrato(
@@ -601,32 +640,47 @@ class FeatureService:
 
         else:
 
-            valores = (
-                contratos_anteriores["valorGlobal"]
-                .astype(float)
-            )
+                valores = pd.to_numeric(
+                    contratos_anteriores["valorGlobal"],
+                    errors="coerce"
+                ).dropna()
 
-            log_valores = np.log1p(valores)
+                log_valores = np.log1p(
+                    valores.clip(lower=0)
+                )
 
-            mediana = log_valores.median()
+                mediana = np.median(log_valores)
 
-            q1 = log_valores.quantile(0.25)
-            q3 = log_valores.quantile(0.75)
+                q1 = np.percentile(
+                    log_valores,
+                    25
+                )
 
-            iqr = q3 - q1
+                q3 = np.percentile(
+                    log_valores,
+                    75
+                )
 
-            escala = max(
-                iqr / 1.349,
-                0.05
-            )
+                iqr = q3 - q1
 
-            valor_atual = (
-                historico_concorrencia[
+                mad = np.median(
+                    np.abs(
+                        log_valores - mediana
+                    )
+                )
+
+                escala = max(
+                    mad * 1.4826,
+                    iqr / 1.349,
+                    0.05
+                )
+                valor_atual = (
                     historico_concorrencia[
-                        "dataPublicacaoPncp"
-                    ] == data_compra
-                ]["valorUnitarioHomologado"]
-            )
+                        historico_concorrencia[
+                            "dataPublicacaoPncp"
+                        ] == data_compra
+                    ]["valorUnitarioHomologado"]
+                )
 
             # Para o MVP, usamos o valorGlobal da compra
             # quando disponível no histórico da API.
@@ -665,23 +719,19 @@ class FeatureService:
                         float(valor_global_atual.iloc[0])
                     )
 
-                    score = abs(
+                    distancia_log_contrato = abs(
                         log_valor_atual - mediana
                     ) / escala
 
-                    evidencia = 1 - np.exp(
-                        -score / 3
-                    )
-
                     log_score_contrato = np.log1p(
-                        evidencia
+                        distancia_log_contrato
                     )
 
-                    contrato_sem_referencia = 0
+                        contrato_sem_referencia = 0
 
-            log_contratos_orgao_hist = np.log1p(
-                quantidade_contratos
-            )
+                    log_contratos_orgao_hist = np.log1p(
+                        quantidade_contratos
+                    )
 
         return {
             "log_desvio_concorrencia_v2":
@@ -709,7 +759,8 @@ class FeatureService:
         valor_total,
         fornecedor,
         orgao,
-        data_compra
+        data_compra,
+        numeroControlePNCP
     ):
 
         # ============================================================
@@ -766,7 +817,8 @@ class FeatureService:
                 descricao=descricao,
                 orgao=orgao,
                 quantidade=quantidade,
-                data_compra=data_compra
+                data_compra=data_compra,
+                numeroControlePNCP=numeroControlePNCP
             )
         )
 

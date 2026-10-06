@@ -117,7 +117,8 @@ orgao_temporal = service.calcular_features_orgao_temporal(
     descricao="CADEIRA SOBRE",
     orgao="00000000000100",
     quantidade=50,
-    data_compra="2025-12-31 10:30:00"
+    data_compra="2025-12-31 10:30:00",
+    numeroControlePNCP="95951323000177-2-000019/2025"
 )
 
 print(orgao_temporal)
@@ -145,7 +146,8 @@ features_completas = service.calcular_features_completas(
     valor_total=6000.00,
     fornecedor="00000000000100",
     orgao="00000000000100",
-    data_compra="2025-12-31"
+    data_compra="2025-12-31",
+    numeroControlePNCP="95951323000177-2-000019/2025"
 )
 
 print("Quantidade de features:", len(features_completas))
@@ -261,7 +263,8 @@ resultado_final = analysis_service.analisar(
     valor_total=6000,
     fornecedor="00000000000100",
     orgao="00000000000100",
-    data_compra="2025-12-31"
+    data_compra="2025-12-31",
+    numeroControlePNCP="95951323000177-2-000019/2025"
 )
 
 print("\n===== RESULTADO FINAL =====")
@@ -345,38 +348,77 @@ print("=" * 80)
 print("TESTE — calcular_features_orgao_temporal")
 print("=" * 80)
 
+# =============================================================================
+# VALIDAÇÃO — FEATURE SERVICE x PIPELINE CAUSAL
+# =============================================================================
+
+print("=" * 80)
+print("VALIDAÇÃO — FEATURE SERVICE x PIPELINE CAUSAL")
+print("=" * 80)
+
 feature_service_teste = FeatureService()
 
-resultado_teste = feature_service_teste.calcular_features_orgao_temporal(
+resultado_api = feature_service_teste.calcular_features_orgao_temporal(
     descricao="ABACATE",
-    orgao="10391817000191",
-    quantidade=10,
-    data_compra="2025-01-09 12:21:12"
+    orgao="95951323000177",
+    quantidade=216,
+    data_compra="2025-01-04 02:16:04",
+    numeroControlePNCP="95951323000177-2-000019/2025"
 )
 
-print("\nResultado:")
+print("\nResultado FeatureService:")
 
-for chave, valor in resultado_teste.items():
-    print(f"- {chave}: {valor}")
+for chave, valor in resultado_api.items():
+    print(f"{chave}: {valor}")
+    
+# ============================================================
+# GOLD STANDARD — TESTE REAL CONTRA FEATURE SERVICE
+# ============================================================
 
-print("\n" + "=" * 80)
-print("VALIDAÇÃO")
-print("=" * 80)
+resultado_api = feature_service_teste.calcular_features_completas(
+    descricao="TUBO ENDOTRAQUEAL",
+    unidade=None,
+    preco=3.46,
+    quantidade=100.0,
+    valor_total=346.0,
+    fornecedor="26168820000180",
+    orgao="46374500000194",
+    data_compra="2025-01-07 13:22:06",
+    numeroControlePNCP="46374500000194-2-006848/2024"
+)
 
-features_esperadas = {
-    "log_qty_vs_orgao_hist_v2",
-    "orgao_qty_sem_referencia_v2",
-    "log_registros_mesmo_dia",
-    "log_contracts_same_minute"
-}
+print("\n===== FEATURES FEATURE SERVICE =====")
 
-assert set(resultado_teste.keys()) == features_esperadas
+for i, feature in enumerate(
+    feature_service_teste.features,
+    1
+):
+    print(
+        f"{i:02d}. {feature} = "
+        f"{resultado_api[feature]}"
+    )
+    
+print("\n===== DEBUG REFERÊNCIA PREÇO =====")
 
-print("\n✅ As 4 features foram calculadas.")
-print("✅ Nenhuma feature foi perdida.")
-print("✅ FeatureService continua carregando.")
-print("⚠️ Ainda não validamos os valores contra o notebook causal.")
+referencia = service.buscar_referencia_preco(
+    "TUBO ENDOTRAQUEAL",
+    None
+)
 
-print("\n" + "=" * 80)
-print("FIM")
-print("=" * 80)
+print("Referência utilizada pela API:")
+print(referencia)
+
+print("\nCálculos:")
+distancia = 0.07929560267053759
+
+print("distancia_log:", distancia)
+
+print(
+    "escala_robusta:",
+    referencia["escala_robusta"]
+)
+
+print(
+    "distancia / escala:",
+    distancia / referencia["escala_robusta"]
+)

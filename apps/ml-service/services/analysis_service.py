@@ -19,7 +19,8 @@ class AnalysisService:
         valor_total,
         fornecedor,
         orgao,
-        data_compra
+        data_compra,
+        numeroControlePNCP
     ):
 
         features = (
@@ -31,7 +32,8 @@ class AnalysisService:
                 valor_total=valor_total,
                 fornecedor=fornecedor,
                 orgao=orgao,
-                data_compra=data_compra
+                data_compra=data_compra,
+                numeroControlePNCP=numeroControlePNCP
             )
         )
 
