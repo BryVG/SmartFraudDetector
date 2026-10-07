@@ -31,6 +31,11 @@ export class FraudAnalysisController {
     return this.fraudAnalysisService.findAll()
   }
 
+  @Get('demo')
+  analisarDemo() {
+    return this.fraudAnalysisService.analisarDemo()
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe)

@@ -96,4 +96,81 @@ export class FraudAnalysisService {
       where: { id }
     })
   }
+  async analisarDemo() {
+
+  const itens = await this.prisma.purchaseItem.findMany({
+    take: 5,
+
+    include: {
+      product: true,
+      purchaseOrder: {
+        include: {
+          supplier: true
+        }
+      }
+    }
+  })
+
+  const resultados = []
+
+  for (const item of itens) {
+
+    const response = await fetch(
+      'http://localhost:5000/api/analisar',
+      {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          descricao: item.product.name,
+
+          unidade: item.unit,
+
+          preco: item.unitPrice,
+
+          quantidade: item.quantity,
+
+          valor_total: item.totalPrice,
+
+          fornecedor: String(
+            item.purchaseOrder.supplierId
+          ),
+
+          orgao: 'DEMO',
+
+          data_compra:
+            item.purchaseOrder.createdAt
+              .toISOString(),
+
+          numeroControlePNCP:
+            `DEMO-${item.id}`
+        })
+      }
+    )
+
+    const resultado = await response.json()
+
+    resultados.push({
+      itemId: item.id,
+
+      produto: item.product.name,
+
+      fornecedor:
+        item.purchaseOrder.supplier.name,
+
+      preco: item.unitPrice,
+
+      quantidade: item.quantity,
+
+      valorTotal: item.totalPrice,
+
+      ...resultado
+    })
+  }
+
+  return resultados
+}
 }
