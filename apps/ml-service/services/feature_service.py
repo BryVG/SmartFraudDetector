@@ -1,14 +1,21 @@
+
+
 import joblib
 import pandas as pd
 import numpy as np
-
+import json
 
 class FeatureService:
 
     def __init__(self):
-        self.model_path = "artifacts/isolation_forest_causal_31.joblib"
-        self.features_path = "artifacts/features_iforest_causal_31.joblib"
-        self.metadata_path = "artifacts/metadata_modelo_causal_31.joblib"
+        self.model_path = "artifacts/isolation_forest_causal_final.joblib"
+        self.features_path = "artifacts/features_iforest_causal_final.joblib"
+
+        # Metadata oficial do modelo final
+        self.metadata_path = "artifacts/metadata_modelo_investigacao_final.joblib"
+
+        # Metadata antigo usado SOMENTE para referências auxiliares
+        self.metadata_auxiliar_path = "artifacts/metadata_modelo_causal_31.joblib"
 
         self.historico_api_path = "artifacts/historico_api_causal.parquet"
         self.referencias_preco_path = "artifacts/referencias_preco_causal.parquet"
@@ -18,11 +25,12 @@ class FeatureService:
         self.historico_concorrencia_path = "artifacts/historico_concorrencia_causal.parquet"
         self.historico_temporal_path = "artifacts/historico_temporal_causal.parquet"
         self.historico_contratos_path = "artifacts/historico_contratos_causal.parquet"
-
+        self.config_path = "artifacts/config_score_investigacao_final.json"
         self._carregar_artifacts()
 
     def _carregar_artifacts(self):
-
+        
+    
         print("Carregando modelo...")
         self.model = joblib.load(self.model_path)
 
@@ -32,6 +40,9 @@ class FeatureService:
         print("Carregando metadata...")
         self.metadata = joblib.load(self.metadata_path)
 
+        self.metadata_auxiliar = joblib.load(
+        self.metadata_auxiliar_path
+        )
         print("Carregando histórico da API...")
         self.historico_api = pd.read_parquet(
             self.historico_api_path
@@ -71,9 +82,11 @@ class FeatureService:
         self.historico_contratos = pd.read_parquet(
             self.historico_contratos_path
         )
-
-        print("Artifacts carregados com sucesso.")
         
+        print("Carregando configuração do score...")
+        with open(self.config_path, "r", encoding="utf-8") as arquivo:
+            self.config = json.load(arquivo)
+
     def buscar_referencia_preco(self, descricao, unidade):
 
         referencias = self.referencias_preco
@@ -273,7 +286,7 @@ class FeatureService:
         if total_historico < 3:
 
             return {
-                "share_hist_pf_v2": self.metadata["referencias_neutras"][
+                "share_hist_pf_v2": self.metadata_auxiliar["referencias_neutras"][
                     "share_hist_pf_v2"
                 ],
                 "share_sem_referencia": 1
@@ -311,7 +324,7 @@ class FeatureService:
             (historico["dataPublicacaoPncp"] < data_compra)
         ].copy()
 
-        neutros = self.metadata["referencias_neutras"]
+        neutros = self.metadata_auxiliar["referencias_neutras"]
 
         total_historico = historico_anterior[
             "_qtd_evento_fornecedor"
@@ -388,7 +401,7 @@ class FeatureService:
         if len(historico_anterior) < 3:
 
             log_qty_vs_orgao = (
-                self.metadata["referencias_neutras"]
+                self.metadata_auxiliar["referencias_neutras"]
                 ["log_qty_vs_orgao_hist_v2"]
             )
 
@@ -404,7 +417,7 @@ class FeatureService:
             if pd.isna(quantidade_media) or quantidade_media <= 0:
 
                 log_qty_vs_orgao = (
-                    self.metadata["referencias_neutras"]
+                    self.metadata_auxiliar["referencias_neutras"]
                     ["log_qty_vs_orgao_hist_v2"]
                 )
 
@@ -557,22 +570,22 @@ class FeatureService:
             )
         ]
 
-        if unidade is None or pd.isna(unidade):
-
-            historico = historico[
-                historico["unidadeMedida"].isna()
-            ]
-
-        else:
-
-            historico = historico[
-                historico["unidadeMedida"].astype(str)
-                == str(unidade)
-            ]
-
+        historico = historico_concorrencia[
+            (historico_concorrencia["descricao_normalizada"] == descricao)
+            &
+            (
+                historico_concorrencia["dataPublicacaoPncp"]
+                < data_compra
+            )
+            &
+            (
+                historico_concorrencia["niFornecedor"].astype(str)
+                != str(fornecedor)
+            )
+        ]
         if len(historico) < 3:
 
-            log_desvio_concorrencia = self.metadata[
+            log_desvio_concorrencia = self.metadata_auxiliar[
                 "referencias_neutras"
             ]["log_desvio_concorrencia_v2"]
 
@@ -628,7 +641,7 @@ class FeatureService:
 
         if quantidade_contratos < 3:
 
-            log_score_contrato = self.metadata[
+            log_score_contrato = self.metadata_auxiliar[
                 "referencias_neutras"
             ]["log_score_contrato_orgao_v2"]
 
@@ -693,7 +706,7 @@ class FeatureService:
 
             if compra_atual.empty:
 
-                log_score_contrato = self.metadata[
+                log_score_contrato = self.metadata_auxiliar[
                     "referencias_neutras"
                 ]["log_score_contrato_orgao_v2"]
 
@@ -708,7 +721,7 @@ class FeatureService:
 
                 if valor_global_atual.empty:
 
-                    log_score_contrato = self.metadata[
+                    log_score_contrato = self.metadata_auxiliar[
                         "referencias_neutras"
                     ]["log_score_contrato_orgao_v2"]
 

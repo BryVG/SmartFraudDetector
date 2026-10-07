@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 
 from services.feature_service import FeatureService
 from services.scoring_service import ScoringService
@@ -25,10 +25,9 @@ analysis_service = AnalysisService(
     explanation_service=explanation_service
 )
 
+
 @app.post("/api/analisar")
 def analisar():
-
-    from flask import request, jsonify
 
     dados = request.get_json()
 
@@ -44,10 +43,12 @@ def analisar():
         ),
         fornecedor=str(dados["fornecedor"]),
         orgao=str(dados["orgao"]),
-        data_compra=dados["data_compra"]
+        data_compra=dados["data_compra"],
+        numeroControlePNCP=dados["numeroControlePNCP"]
     )
 
     return jsonify(resultado)
+
 
 if __name__ == "__main__":
     app.run(

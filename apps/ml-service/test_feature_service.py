@@ -1,5 +1,5 @@
 from services.feature_service import FeatureService
-
+import numpy as np
 
 service = FeatureService()
 
@@ -422,3 +422,38 @@ print(
     "distancia / escala:",
     distancia / referencia["escala_robusta"]
 )
+
+print("\n===== TESTE ISOLATION FOREST — GOLD ROW =====")
+
+features_gold = np.array([[
+    1.4951487660319727,
+    4.61512051684126,
+    0.07929560267053759,
+    0.4021593199736646,
+    69,
+    0.10343558724824195,
+    0.28768207245178096,
+    0.0,
+    0,
+    0.05,
+    0.395,
+    0,
+    0,
+    0,
+    0,
+    0.5511769192895581,
+    0,
+    0.15132183186115236,
+    0,
+    4.7535901911063645,
+    0.0,
+    0.7300054584206223,
+    3.258096538021482,
+    0
+]])
+
+score_gold_api = -service.model.decision_function(
+    features_gold
+)[0]
+
+print("Score API:", score_gold_api)

@@ -1,0 +1,44 @@
+{
+    "versao": "1.0-final",
+    "pesos": {
+        "evidencia_estatistica": 0.4,
+        "evidencia_isolation": 0.3,
+        "evidencia_estrutural": 0.3
+    },
+    "pesos_estatisticos": {
+        "preco": 0.4,
+        "quantidade": 0.3,
+        "inconsistencia": 0.3
+    },
+    "fator_sem_unidade": 0.3,
+    "thresholds": {
+        "p75": 0.2827282001418459,
+        "p90": 0.35059422601129325,
+        "p95": 0.384797277520338
+    },
+    "classes": {
+        "BAIXO": {
+            "min": 0.0,
+            "max_exclusivo": 0.2827282001418459
+        },
+        "MODERADO": {
+            "min": 0.2827282001418459,
+            "max_exclusivo": 0.35059422601129325
+        },
+        "ALTO": {
+            "min": 0.35059422601129325,
+            "max_exclusivo": 0.384797277520338
+        },
+        "MUITO_ALTO": {
+            "min": 0.384797277520338,
+            "max": 1.0
+        }
+    },
+    "modelo": {
+        "tipo": "IsolationForest",
+        "n_estimators": 300,
+        "random_state": 42,
+        "contamination": "auto"
+    },
+    "observacao": "As classes representam prioridade relativa de investigação e não probabilidade ou prevalência de fraude."
+}
