@@ -34,8 +34,8 @@ model PurchaseItem {
   createdAt       DateTime        @default(now())
   Measure         String?
   unit            String?
-  fraudAnalysis   FraudAnalysis
-  fraudeAnalysisId Int @Unique
+  fraudAnalysis FraudAnalysis?
+  fraudeAnalysisId Int @unique
   product         Product         @relation(fields: [productId], references: [id])
   purchaseOrder   PurchaseOrder   @relation(fields: [purchaseOrderId], references: [id])
 
@@ -72,7 +72,7 @@ model FraudAnalysis {
   suspicious     Boolean
   reason         String?
   createdAt      DateTime     @default(now())
-  purchaseItem   PurchaseItem
+  purchaseItem   PurchaseItem @relation(fields: [purchaseItemId],references: [id])
   fraudrule      FraudRule[] 
 
   @@index([suspicious])
@@ -89,10 +89,11 @@ model FraudRule {
 
   description String
 
-  severity Severity
+  severity String
 
   weight Float
 
   fraudeAnalysisId Int
   fraudAnalysis   FraudAnalysis @relation(fields: [fraudeAnalysisId], references: [id])
 }
+
