@@ -55,7 +55,7 @@ export class ContractEvolutionStrategy
   date: contract.createdAt,
 
   fraudulent: contract.items.some(item =>
-    item.fraudAnalysis.length > 0
+    item.fraudAnalysis.some(analysis => analysis.suspicious)
   )
 }));
 

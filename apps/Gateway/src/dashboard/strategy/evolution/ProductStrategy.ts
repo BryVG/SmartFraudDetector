@@ -53,7 +53,7 @@ const data =
       date: item.purchaseOrder.createdAt,
 
       fraudulent:
-        item.fraudAnalysis.length > 0
+        item.fraudAnalysis.some(suspicious => suspicious.suspicious)
     }))
   );
 

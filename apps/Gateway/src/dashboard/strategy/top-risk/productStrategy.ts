@@ -49,4 +49,3 @@ const products = await this.prisma.product.findMany({
         })
        return data.sort((a, b) => b.suspicious - a.suspicious).slice(0, 10);
     }}
-      
