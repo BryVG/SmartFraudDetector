@@ -1,4 +1,5 @@
 import { DashboardFilterDto } from "../dto/dashboard.filter.dto";
+import { Prisma } from "@prisma/client";
 
 export function buildDashboardWhere(
   filters: DashboardFilterDto

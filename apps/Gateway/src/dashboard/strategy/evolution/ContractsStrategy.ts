@@ -51,13 +51,14 @@ export class ContractEvolutionStrategy
         }
 
       });
-      const data = contracts.map(contract => ({
-  date: contract.createdAt,
 
-  fraudulent: contract.items.some(item =>
-    item.fraudAnalysis.some(analysis => analysis.suspicious)
+const data = contracts.map(contract => ({
+  date: contract.createdAt,
+  fraudulent: contract.items.some(
+    item => item.fraudAnalysis?.suspicious ?? false
   )
 }));
+
 
     return groupEvolution(data, groupBy);
   } 

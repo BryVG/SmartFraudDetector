@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EvolutionStrategy } from "./EvolutionStrategy";
-import { SupplierEvolutionStrategy } from "./SupplierStrategy";
+import { SupplierStrategy } from "./SupplierStrategy";
 import { ProductEvolutionStrategy } from "./ProductStrategy";
 import { ContractEvolutionStrategy } from "./ContractsStrategy";
 
@@ -13,7 +13,7 @@ export type EvolutionType =
 export class EvolutionFactory {
   
     constructor(
-        private supplier: SupplierEvolutionStrategy,
+        private supplier: SupplierStrategy,
         private product: ProductEvolutionStrategy,
         private contract: ContractEvolutionStrategy
     ) {}

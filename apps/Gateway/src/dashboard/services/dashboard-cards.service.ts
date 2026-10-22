@@ -15,7 +15,7 @@ async getCards() {
     this.prisma.purchaseOrder.count(),
     this.prisma.purchaseOrder.aggregate({
       _sum: {
-        totalValue: true
+        totalAmount: true
       }
     }),
     this.prisma.fraudAnalysis.count({
@@ -37,10 +37,10 @@ async getCards() {
     })
   ])
 
-  return {
-    totalContracts,
-    monitoredValue: monitoredValue._sum.totalValue ?? 0,
-    highRiskContracts,
-    avgRisk: avgRisk._avg.fraudScore ?? 0
-  }
+return {
+  totalContracts,
+  monitoredValue: monitoredValue._sum?.totalAmount ?? 0,
+  highRiskContracts,
+  avgRisk: avgRisk._avg?.fraudScore ?? 0,
+};
 }}

@@ -4,9 +4,10 @@ import {
   BadRequestException
 } from '@nestjs/common'
 
-import { PrismaService }
-from '../../prisma/Prisma.service'
-import { TopRiskFactory } from './strategy/top-risk/TopRiskFactory'
+import { PrismaService } from '../../prisma/Prisma.service';
+import { TopRiskFactory, TopRiskType } from './strategy/top-risk/TopRiskFactory';
+import { DashboardFilterDto } from './dto/dashboard.filter.dto';
+import { buildDashboardWhere } from './utils/filters';
 
 @Injectable()
 export class DashboardService {
@@ -16,14 +17,10 @@ export class DashboardService {
     private factory: TopRiskFactory
   ) {}
 
-async getTopRisk(type:string, where:any){
-
-        const strategy =
-            this.factory.get(type);
-
-        return strategy.execute(where);
-
-    }
+async getTopRisk(type: TopRiskType, where: any) {
+  const strategy = this.factory.get(type);
+  return strategy.execute(where);
+}
 
 async getRiskDistribution(filters: DashboardFilterDto) {
 
@@ -46,9 +43,11 @@ async getRiskDistribution(filters: DashboardFilterDto) {
 
             where:{
 
-                ...where,
+                purchaseOrder: {
+      ...where
+    },  
 
-                score:{
+                fraudScore:{
                     gte:0,
                     lte:30
                 }
@@ -61,9 +60,10 @@ async getRiskDistribution(filters: DashboardFilterDto) {
 
             where:{
 
-                ...where,
-
-                score:{
+               purchaseOrder: {
+      ...where
+    },
+                fraudScore:{
                     gt:30,
                     lte:60
                 }
@@ -76,9 +76,11 @@ async getRiskDistribution(filters: DashboardFilterDto) {
 
             where:{
 
-                ...where,
+                purchaseOrder: {
+      ...where
+    },
 
-                score:{
+                fraudScore:{
                     gt:60,
                     lte:80
                 }
@@ -91,9 +93,10 @@ async getRiskDistribution(filters: DashboardFilterDto) {
 
             where:{
 
-                ...where,
-
-                score:{
+               purchaseOrder: {
+      ...where
+    },
+                fraudScore:{
                     gt:80
                 }
 

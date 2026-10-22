@@ -39,7 +39,7 @@ export class SupplierStrategy implements EvolutionStrategy {
             supplier.orders.map(order => ({
                 date: order.createdAt,
                 fraudulent: order.items.some(item =>
-                    item.fraudAnalysis.some(analysis => analysis.suspicious)
+                    item.fraudAnalysis?.suspicious ?? false
                 ),
                 entityId: supplier.id
             }))
